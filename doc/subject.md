@@ -36,7 +36,7 @@ As a reminder, you have to comply with the C++98 standard, so any later feature 
 
 **Compiling**
 • Compile your code with c++ and the flags -Wall -Wextra -Werror
-ㅍc++와 -Wall -Wextra -Werror 플래그를 사용하여 코드를 컴파일합니다.
+c++와 -Wall -Wextra -Werror 플래그를 사용하여 코드를 컴파일합니다.
 
 • Your code should still compile if you add the flag -std=c++98
 • -flag=c++98 플래그를 추가하는 경우에도 코드는 컴파일되어야 합니다 
@@ -127,7 +127,7 @@ vector<bool>을 특수화할 필요는 없습니다.
 
 • map
 
-• stack
+• stack (구현 안할  예정)
 It will use your vector class as default underlying container.
 벡터 클래스가 기반 컨테이너로 사용됩니다.
 
@@ -155,7 +155,8 @@ This is asked so you can discover SFINAE.
 SFINAE를 찾을 수 있도록 질문합니다.
 
 • is_integral
-• equal and/or lexicographical_compare
+• equal
+• lexicographical_compare
 • std::pair
 • std::make_pair
 
@@ -212,7 +213,7 @@ You have to go further than the main given as example!
 • 출력과 성능/타이밍을 비교합니다(containers는 최대 20배 느릴 수 있습니다).
 
 • Test your containers with: ft::<container>
-• ft::< container>로 컨테이너 테스트
+• ft::<container>로 컨테이너 테스트
 
 파랭이
 A main.cpp file is available to download on the intranet project page.
