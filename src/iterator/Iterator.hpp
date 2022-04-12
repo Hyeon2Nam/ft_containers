@@ -110,6 +110,7 @@ namespace ft
 		pointer operator->() const;
 		reference operator[](difference_type n) const;
 	};
+	
 	template <class Iterator>
 	bool operator==(const reverse_iterator<Iterator> &lhs,
 					const reverse_iterator<Iterator> &rhs);
