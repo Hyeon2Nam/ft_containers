@@ -1,5 +1,5 @@
-#ifndef vector_TPP
-#define vector_TPP
+#ifndef VECTOR_TPP
+#define VECTOR_TPP
 
 #include <iostream>
 #include <string>

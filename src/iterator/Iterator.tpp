@@ -1,7 +1,7 @@
-#ifndef iterator_TPP
-#define iterator_TPP
+#ifndef ITERATOR_TPP
+#define ITERATOR_TPP
 
-#include "iterator.hpp"
+#include "Iterator.hpp"
 
 template <class InputIterator, class Distance>
   void advance (InputIterator& it, Distance n);
