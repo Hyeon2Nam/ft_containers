@@ -28,7 +28,7 @@ namespace ft
 	{
 	public:
 		typedef typename T value_type;
-		typedef typename ptrdiff_t difference_type;
+		typedef typename std::ptrdiff_t difference_type;
 		typedef typename random_access_iterator_tag iterator_category;
 		typedef typename T* pointer;
 		typedef typename T& reference;
@@ -39,14 +39,28 @@ namespace ft
 	{
 	public:
 		typedef typename T value_type;
-		typedef typename ptrdiff_t difference_type;
+		typedef typename std::ptrdiff_t difference_type;
 		typedef typename random_access_iterator_tag iterator_category;
 		typedef typename const T* pointer;
 		typedef typename const T& reference;
 	};
 
+	template <class Category,              // iterator::iterator_category
+          class T,                     // iterator::value_type
+          class Distance = ptrdiff_t,  // iterator::difference_type
+          class Pointer = T*,          // iterator::pointer
+          class Reference = T&         // iterator::reference
+          >
+	class iterator
+	{
+	public:
+		typedef T         value_type;
+    	typedef Distance  difference_type;
+    	typedef Pointer   pointer;
+    	typedef Reference reference;
+    	typedef Category  iterator_category;	
+	};
 
-	
 } // namespace ft
 
 #include "Iterator.tpp"
