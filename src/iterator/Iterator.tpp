@@ -3,57 +3,132 @@
 
 #include "Iterator.hpp"
 
-template <class InputIterator, class Distance>
-  void advance (InputIterator& it, Distance n);
-
-
-
 /*
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-iterator::iterator()
-{
-}
+template <typename T>
+ft::random_access_iterator<T>::random_access_iterator() : _p(0){};
 
-iterator::iterator( const iterator & src )
-{
-}
+template <typename T>
+ft::random_access_iterator<T>::random_access_iterator(T *p) : _p(p){};
 
+template <typename T>
+ft::random_access_iterator<T>::random_access_iterator(const random_access_iterator &src)
+{
+	*this = src;
+}
 
 /*
 ** -------------------------------- DESTRUCTOR --------------------------------
 */
 
-iterator::~iterator()
-{
-}
-
+template <typename T>
+ft::random_access_iterator<T>::~random_access_iterator() {}
 
 /*
 ** --------------------------------- OVERLOAD ---------------------------------
 */
 
-iterator &				iterator::operator=( iterator const & rhs )
+template <typename T>
+ft::random_access_iterator<T> &ft::random_access_iterator<T>::operator=(const ft::random_access_iterator<T> &rhs)
 {
-	//if ( this != &rhs )
-	//{
-		//this->_value = rhs.getValue();
-	//}
+	if (this != &rhs)
+	{
+		if (*_p)
+			delete _p;
+		this->_p = rhs._p;
+	}
 	return *this;
 }
 
-std::ostream &			operator<<( std::ostream & o, iterator const & i )
+template <typename T>
+ft::random_access_iterator<T> &ft::random_access_iterator<T>::operator++()
 {
-	//o << "Value = " << i.getValue();
-	return o;
+	++_p;
+	return *this;
 }
+
+template <typename T>
+ft::random_access_iterator<T> ft::random_access_iterator<T>::operator++(int)
+{
+	ft::random_access_iterator<T> tmp(*this);
+	++_p;
+	return tmp;
+}
+
+template <typename T>
+ft::random_access_iterator<T> &ft::random_access_iterator<T>::operator--()
+{
+	--_p;
+	return *this;
+}
+
+template <typename T>
+ft::random_access_iterator<T> ft::random_access_iterator<T>::operator--(int)
+{
+	ft::random_access_iterator<T> tmp(*this);
+	--_p;
+	return tmp;
+}
+
+template <typename T>
+bool ft::random_access_iterator<T>::operator==(const random_access_iterator &rhs) const
+{
+	return _p == rhs._p;
+}
+
+template <typename T>
+bool ft::random_access_iterator<T>::operator!=(const random_access_iterator &rhs) const
+{
+	return _p != rhs._p;
+}
+
+
+template <typename T>
+bool ft::random_access_iterator<T>::operator<(const random_access_iterator &rhs) const
+{
+	return _p < rhs._p;
+}
+
+
+template <typename T>
+bool ft::random_access_iterator<T>::operator>(const random_access_iterator &rhs) const
+{
+	return _p > rhs._p;
+}
+
+
+template <typename T>
+bool ft::random_access_iterator<T>::operator>=(const random_access_iterator &rhs) const
+{
+	return _p >= rhs._p;
+}
+
+
+template <typename T>
+bool ft::random_access_iterator<T>::operator<=(const random_access_iterator &rhs) const
+{
+	return _p <= rhs._p;
+}
+
+template <typename T>
+T &ft::random_access_iterator<T>::operator*() const
+{
+	return *_p;
+}
+
+template <typename T>
+T *ft::random_access_iterator<T>::operator->() const
+{
+	return _p;
+}
+
 
 
 /*
 ** --------------------------------- METHODS ----------------------------------
 */
-
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------

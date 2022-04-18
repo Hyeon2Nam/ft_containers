@@ -9,40 +9,40 @@
 ** ------------------------------- CONSTRUCTOR --------------------------------
 */
 
-template <typename T>
-ft::vector<T>::vector()
-{
-}
+// template <typename T>
+// ft::vector<T>::vector()
+// {
+// }
 
-template <typename T>
-ft::vector<T>::vector(const ft::vector<T> &src)
-{
-	(void)src;
-}
+// template <typename T>
+// ft::vector<T>::vector(const ft::vector<T> &src)
+// {
+// 	(void)src;
+// }
 
-/*
-** -------------------------------- DESTRUCTOR --------------------------------
-*/
+// /*
+// ** -------------------------------- DESTRUCTOR --------------------------------
+// */
 
-template <typename T>
-ft::vector<T>::~vector()
-{
-}
+// template <typename T>
+// ft::vector<T>::~vector()
+// {
+// }
 
-/*
-** --------------------------------- OVERLOAD ---------------------------------
-*/
+// /*
+// ** --------------------------------- OVERLOAD ---------------------------------
+// */
 
-template <typename T>
-ft::vector<T> &ft::vector<T>::operator=(ft::vector<T> const &rhs)
-{
-	(void)rhs;
-	// if ( this != &rhs )
-	//{
-	// this->_value = rhs.getValue();
-	//}
-	return *this;
-}
+// template <typename T>
+// ft::vector<T> &ft::vector<T>::operator=(ft::vector<T> const &rhs)
+// {
+// 	(void)rhs;
+// 	// if ( this != &rhs )
+// 	//{
+// 	// this->_value = rhs.getValue();
+// 	//}
+// 	return *this;
+// }
 
 /*
 ** --------------------------------- METHODS ----------------------------------
