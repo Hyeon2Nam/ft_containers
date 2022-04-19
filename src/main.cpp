@@ -1,7 +1,13 @@
-#include "vector/vector.hpp"
-#include "iterator/iterator.hpp"
+#include "Iterator/iterator.hpp"
+#include "Iterator/Reverse_iterator.hpp"
+#include <vector>
 
 int main()
 {
-	ft::vector<int> a;
+	std::vector<int> a;
+
+	for (int i = 0; i < 5; i++)
+		a.push_back(i);
+	for (std::vector<int>::iterator i = a.begin(); i != a.end(); i++)
+		std::cout << *i << " " << std::endl;
 }

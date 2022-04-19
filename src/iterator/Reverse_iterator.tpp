@@ -9,10 +9,16 @@
 */
 
 template <class Iterator>
-ft::reverse_iterator<Iterator>::reverse_iterator() : base_iterator() {}
+ft::reverse_iterator<Iterator>::reverse_iterator()
+{
+	ft::reverse_iterator<Iterator>::base_iterator();
+}
 
 template <class Iterator>
-ft::reverse_iterator<Iterator>::reverse_iterator(typename ft::reverse_iterator<Iterator>::iterator_type it) : base_iterator(it) {}
+ft::reverse_iterator<Iterator>::reverse_iterator(ft::reverse_iterator<Iterator>::iterator_type it)
+{
+	ft::reverse_iterator<Iterator>::base_iterator = it;
+}
 
 /*
 ** --------------------------------- OVERLOAD ---------------------------------
@@ -21,7 +27,7 @@ ft::reverse_iterator<Iterator>::reverse_iterator(typename ft::reverse_iterator<I
 template <class Iterator>
 typename ft::reverse_iterator<Iterator>::reference ft::reverse_iterator<Iterator>::operator*() const
 {
-	iterator_type tmp(base_iterator);
+	iterator_type tmp(ft::reverse_iterator<Iterator>::base_iterator);
 	--tmp;
 	return *tmp;
 }
@@ -30,13 +36,13 @@ template <class Iterator>
 ft::reverse_iterator<Iterator> ft::reverse_iterator<Iterator>::operator+(
 	typename ft::reverse_iterator<Iterator>::difference_type n) const
 {
-	return reverse_iterator(base_iterator - n);
+	return reverse_iterator(ft::reverse_iterator<Iterator>::base_iterator - n);
 }
 
 template <class Iterator>
 ft::reverse_iterator<Iterator> &ft::reverse_iterator<Iterator>::operator++()
 {
-	--base_iterator;
+	--ft::reverse_iterator<Iterator>::base_iterator;
 	return *this;
 }
 
@@ -52,7 +58,7 @@ template <class Iterator>
 ft::reverse_iterator<Iterator> &ft::reverse_iterator<Iterator>::operator+=(
 	typename ft::reverse_iterator<Iterator>::difference_type n)
 {
-	base_iterator -= n;
+	ft::reverse_iterator<Iterator>::base_iterator -= n;
 	return *this;
 }
 
@@ -60,13 +66,13 @@ template <class Iterator>
 ft::reverse_iterator<Iterator> ft::reverse_iterator<Iterator>::operator-(
 	typename ft::reverse_iterator<Iterator>::difference_type n) const
 {
-	return ft::reverse_iterator(base_iterator + n);
+	return ft::reverse_iterator<Iterator>(ft::reverse_iterator<Iterator>::base_iterator + n);
 }
 
 template <class Iterator>
 ft::reverse_iterator<Iterator> &ft::reverse_iterator<Iterator>::operator--()
 {
-	++base_iterator;
+	++ft::reverse_iterator<Iterator>::base_iterator;
 	return *this;
 }
 
@@ -82,7 +88,7 @@ template <class Iterator>
 ft::reverse_iterator<Iterator> &ft::reverse_iterator<Iterator>::operator-=(
 	typename ft::reverse_iterator<Iterator>::difference_type n)
 {
-	base_iterator += n;
+	ft::reverse_iterator<Iterator>::base_iterator += n;
 	return *this;
 }
 
@@ -96,7 +102,7 @@ template <class Iterator>
 typename ft::reverse_iterator<Iterator>::reference ft::reverse_iterator<Iterator>::operator[](
 	typename ft::reverse_iterator<Iterator>::difference_type n) const
 {
-	return base_iterator[-n - 1];
+	return ft::reverse_iterator<Iterator>::base_iterator[-n - 1];
 }
 
 template <class Iterator>
@@ -164,7 +170,7 @@ typename ft::reverse_iterator<Iterator>::difference_type operator-(
 template <class Iterator>
 typename ft::reverse_iterator<Iterator>::iterator_type ft::reverse_iterator<Iterator>::base() const
 {
-	return base_iterator;
+	return ft::reverse_iterator<Iterator>::base_iterator;
 }
 
 #endif

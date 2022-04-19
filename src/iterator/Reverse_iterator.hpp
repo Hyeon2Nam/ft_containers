@@ -10,7 +10,7 @@ namespace ft
 	class reverse_iterator
 	{
 	public:
-		typedef typename Iterator iterator_type;										 // Iterator's type
+		typedef Iterator iterator_type;														 // Iterator's type
 		typedef typename ft::iterator_traits<Iterator>::iterator_category iterator_category; // Preserves Iterator's category
 		typedef typename ft::iterator_traits<Iterator>::value_type value_type;				 // Preserves Iterator's value type
 		typedef typename ft::iterator_traits<Iterator>::difference_type difference_type;	 // Preserves Iterator's difference type
