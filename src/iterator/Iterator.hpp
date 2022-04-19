@@ -73,6 +73,13 @@ namespace ft
 	template <typename T>
 	class random_access_iterator : public ft::iterator<random_access_iterator, T>
 	{
+	public:
+		typedef typename ft::iterator<random_access_iterator, T>::value_type value_type;
+		typedef typename ft::iterator<random_access_iterator, T>::difference_type difference_type;
+		typedef typename ft::iterator<random_access_iterator, T>::pointer pointer;
+		typedef typename ft::iterator<random_access_iterator, T>::reference reference;
+		typedef typename ft::iterator<random_access_iterator, T>::iterator_category iterator_category;
+
 	private:
 		T *_p;
 
@@ -87,24 +94,10 @@ namespace ft
 		random_access_iterator operator++(int);
 		random_access_iterator &operator--();
 		random_access_iterator operator--(int);
-		random_access_iterator operator+(const difference_type n) const
-		{
-			return (_ptr + n);
-		};
-		random_access_iterator operator-(const difference_type n) const
-		{
-			return (_ptr - n);
-		};
-		random_access_iterator &operator+=(const difference_type n) const
-		{
-			_ptr += n;
-			return (*this);
-		};
-		random_access_iterator &operator-=(const difference_type n) const
-		{
-			_ptr -= n;
-			return (*this);
-		};
+		random_access_iterator operator+(const difference_type n) const;
+		random_access_iterator operator-(const difference_type n) const;
+		random_access_iterator &operator+=(const difference_type n);
+		random_access_iterator &operator-=(const difference_type n);
 
 		bool operator==(const random_access_iterator &rhs) const;
 		bool operator!=(const random_access_iterator &rhs) const;
@@ -113,11 +106,9 @@ namespace ft
 		bool operator>=(const random_access_iterator &rhs) const;
 		bool operator<=(const random_access_iterator &rhs) const;
 
-		T &operator*() const;
-		T *operator->() const T operator[](const difference_type n) const
-		{
-			return _ptr[n];
-		}
+		reference operator*() const;
+		pointer operator->() const;
+		reference operator[](difference_type n) const;
 	};
 
 } // namespace ft

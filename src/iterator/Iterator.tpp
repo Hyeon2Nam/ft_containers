@@ -73,6 +73,36 @@ ft::random_access_iterator<T> ft::random_access_iterator<T>::operator--(int)
 }
 
 template <typename T>
+ft::random_access_iterator<T> ft::random_access_iterator<T>::operator+(
+	const typename ft::random_access_iterator<T>::difference_type n) const
+{
+	return (_ptr + n);
+};
+
+template <typename T>
+ft::random_access_iterator<T> ft::random_access_iterator<T>::operator-(
+	const typename ft::random_access_iterator<T>::difference_type n) const
+{
+	return (_ptr - n);
+};
+
+template <typename T>
+ft::random_access_iterator<T> &ft::random_access_iterator<T>::operator+=(
+	const typename ft::random_access_iterator<T>::difference_type n)
+{
+	_ptr += n;
+	return (*this);
+};
+
+template <typename T>
+ft::random_access_iterator<T> &ft::random_access_iterator<T>::operator-=(
+	const typename ft::random_access_iterator<T>::difference_type n)
+{
+	_ptr -= n;
+	return (*this);
+};
+
+template <typename T>
 bool ft::random_access_iterator<T>::operator==(const random_access_iterator &rhs) const
 {
 	return _p == rhs._p;
@@ -84,13 +114,11 @@ bool ft::random_access_iterator<T>::operator!=(const random_access_iterator &rhs
 	return _p != rhs._p;
 }
 
-
 template <typename T>
 bool ft::random_access_iterator<T>::operator<(const random_access_iterator &rhs) const
 {
 	return _p < rhs._p;
 }
-
 
 template <typename T>
 bool ft::random_access_iterator<T>::operator>(const random_access_iterator &rhs) const
@@ -98,13 +126,11 @@ bool ft::random_access_iterator<T>::operator>(const random_access_iterator &rhs)
 	return _p > rhs._p;
 }
 
-
 template <typename T>
 bool ft::random_access_iterator<T>::operator>=(const random_access_iterator &rhs) const
 {
 	return _p >= rhs._p;
 }
-
 
 template <typename T>
 bool ft::random_access_iterator<T>::operator<=(const random_access_iterator &rhs) const
@@ -113,18 +139,23 @@ bool ft::random_access_iterator<T>::operator<=(const random_access_iterator &rhs
 }
 
 template <typename T>
-T &ft::random_access_iterator<T>::operator*() const
+typename ft::random_access_iterator<T>::reference ft::random_access_iterator<T>::operator*() const
 {
 	return *_p;
 }
 
 template <typename T>
-T *ft::random_access_iterator<T>::operator->() const
+typename ft::random_access_iterator<T>::pointer ft::random_access_iterator<T>::operator->() const
 {
 	return _p;
 }
 
-
+template <typename T>
+typename ft::random_access_iterator<T>::reference ft::random_access_iterator<T>::operator[](
+	typename ft::random_access_iterator<T>::difference_type n) const
+{
+	return _ptr[n];
+}
 
 /*
 ** --------------------------------- METHODS ----------------------------------
