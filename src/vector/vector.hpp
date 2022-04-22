@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <exception>
 #include "../iterator/Iterator.hpp"
 #include "../iterator/Reverse_iterator.hpp"
 #include "../utils/Utils.hpp"
@@ -57,14 +58,8 @@ namespace ft
 			--_p;
 			return tmp;
 		};
-		random_access_iterator operator+(const difference_type n) const
-		{
-			return (_p + n);
-		};
-		random_access_iterator operator-(const difference_type n) const
-		{
-			return (_p - n);
-		};
+		random_access_iterator operator+(const difference_type n) const { return (_p + n); };
+		random_access_iterator operator-(const difference_type n) const { return (_p - n); };
 		random_access_iterator &operator+=(const difference_type n)
 		{
 			_p += n;
@@ -76,43 +71,16 @@ namespace ft
 			return (*this);
 		};
 
-		bool operator==(const random_access_iterator &rhs) const
-		{
-			return _p == rhs._p;
-		};
-		bool operator!=(const random_access_iterator &rhs) const
-		{
-			return _p != rhs._p;
-		};
-		bool operator<(const random_access_iterator &rhs) const
-		{
-			return _p < rhs._p;
-		};
-		bool operator>(const random_access_iterator &rhs) const
-		{
-			return _p > rhs._p;
-		};
-		bool operator>=(const random_access_iterator &rhs) const
-		{
-			return _p >= rhs._p;
-		};
-		bool operator<=(const random_access_iterator &rhs) const
-		{
-			return _p <= rhs._p;
-		};
+		bool operator==(const random_access_iterator &rhs) const { return _p == rhs._p; };
+		bool operator!=(const random_access_iterator &rhs) const { return _p != rhs._p; };
+		bool operator<(const random_access_iterator &rhs) const { return _p < rhs._p; };
+		bool operator>(const random_access_iterator &rhs) const { return _p > rhs._p; };
+		bool operator>=(const random_access_iterator &rhs) const { return _p >= rhs._p; };
+		bool operator<=(const random_access_iterator &rhs) const { return _p <= rhs._p; };
 
-		reference operator*() const
-		{
-			return *_p;
-		};
-		pointer operator->() const
-		{
-			return _p;
-		};
-		reference operator[](difference_type n) const
-		{
-			return _p[n];
-		};
+		reference operator*() const { return *_p; };
+		pointer operator->() const { return _p; };
+		reference operator[](difference_type n) const { return _p[n]; };
 	};
 
 	template <class T, class Alloc = std::allocator<T> >
@@ -159,6 +127,9 @@ namespace ft
 			   const allocator_type &alloc = allocator_type(),
 			   typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
 		{
+			if (first > last)
+				throw std::length_error("vector");
+
 			_alloc = alloc;
 			_size = last - first;
 			_cap = _size;
@@ -226,56 +197,162 @@ namespace ft
 		// ** -------------------------------- Capacity --------------------------------
 		// */
 
-		size_type size() const
+		size_type size() const { return _size; };
+
+		size_type max_size() const { return _alloc.max_size(); };
+
+		void resize(size_type n, value_type val = value_type())
 		{
-			return _size;
+			if (n < _size)
+			{
+				for (size_type i = n; i < _size; i++)
+					_alloc.destroy(_arr + n);
+				_size = n;
+			}
+			if (n > _size)
+			{
+				if (n > _cap)
+					reserve(n);
+				for (size_type i = _size; i < n; i++)
+					_alloc.construct(_arr + i, val);
+				_size = n;
+			}
+		}
+
+		size_type capacity() const { return _cap; };
+
+		bool empty() const
+		{
+			if (_size == 0)
+				return true;
+			return false;
 		};
 
-		size_type max_size() const
+		void reserve(size_type n)
 		{
-			return _alloc.max_size();
-		};
+			if (n <= _cap)
+				return;
 
-		// void resize(size_type n, value_type val = value_type());
+			pointer tmp = _alloc.allocate(_cap);
+			for (size_type i = 0; i < _size; i++)
+				_alloc.construct(tmp + i, *(_arr + i));
 
-		size_type capacity() const
-		{
-			return _cap;
-		};
+			if (_size != 0)
+			{
+				for (size_type i = 0; i < _size; i++)
+					_alloc.destroy(_arr + i);
+				_alloc.deallocate(_arr, _cap);
+			}
 
-		// bool empty() const;
-
-		// void reserve(size_type n);
+			_cap = n;
+			_arr = _alloc.allocate(_cap);
+			_arr = tmp;
+		}
 
 		// /*
 		// ** -------------------------------- Element access --------------------------------
 		// */
 
-		// reference operator[](size_type n);
-		// const_reference operator[](size_type n) const;
+		reference operator[](size_type n) { return *(_arr + n); };
+		const_reference operator[](size_type n) const { return *(_arr + n); };
 
-		// reference at(size_type n);
-		// const_reference at(size_type n) const;
+		reference at(size_type n)
+		{
+			if (n >= _size)
+				throw std::out_of_range("vector");
+			return *(_arr + n);
+		};
+		const_reference at(size_type n) const
+		{
+			if (n >= _size)
+				throw std::out_of_range("vector");
+			return *(_arr + n);
+		};
 
-		// reference front();
-		// const_reference front() const;
+		reference front() { return *_arr; };
+		const_reference front() const { return *_arr; };
 
-		// reference back();
-		// const_reference back() const;
+		reference back() { return *(_arr + (_size - 1)); };
+		const_reference back() const { return *(_arr + (_size - 1)); };
 
 		// /*
 		// ** -------------------------------- Modifiers --------------------------------
 		// */
 
-		// template <class InputIterator>
-		// void assign(InputIterator first, InputIterator last);
-		// void assign(size_type n, const value_type &val);
+		template <class InputIterator>
+		void assign(InputIterator first, InputIterator last,
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
+		{
+			if (first > last)
+				throw std::length_error("vector");
 
-		// void push_back(const value_type &val);
-		// void pop_back();
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(_arr + i);
 
-		// iterator insert(iterator position, const value_type &val);
-		// void insert(iterator position, size_type n, const value_type &val);
+			_size = last - first;
+			_cap = _size;
+			_arr = _alloc.allocate(_cap);
+			for (size_type i = 0; i < _size; i++)
+				_alloc.construct(_arr + i, *first++);
+		};
+		void assign(size_type n, const value_type &val)
+		{
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(_arr + i);
+			if (n > _cap)
+				_alloc.deallocate(_arr, _cap);
+
+			_size = n;
+			_cap = n;
+			_arr = _alloc.allocate(n);
+			for (size_type i = 0; i < _size; i++)
+				_alloc.construct(_arr + i, val);
+		};
+
+		void push_back(const value_type &val)
+		{
+			if (_size + 1 >= _cap)
+				reserve(_cap * 2);
+			_alloc.construct(_arr + _size, val);
+			++_size;
+		};
+
+		void pop_back()
+		{
+			--_size;
+			_alloc.destroy(_arr + _size);
+		};
+
+		iterator insert(iterator position, const value_type &val)
+		{
+			difference_type diff = position - _arr;
+			pointer tmp;
+			difference_type i = 0;
+
+			if (_size + 1 >= _cap)
+				_cap *= 2;
+
+			tmp = _alloc.allocate(_cap);
+			for (; i < diff; i++)
+				_alloc.construct(tmp + i, *(_arr + i));
+			_alloc.construct(tmp + i, val);
+			i++;
+			_size++;
+			for (; i < static_cast<difference_type>(_size); i++)
+				_alloc.construct(tmp + i, *(_arr + (i - 1)));
+
+			for (size_type i = 0; i < _size - 1; i++)
+				_alloc.destroy(_arr + i);
+			_alloc.deallocate(_arr, _cap);
+
+			_arr = tmp;
+
+			return position;
+		};
+		// void insert(iterator position, size_type n, const value_type &val)
+		// {
+		// };
+
 		// template <class InputIterator>
 		// void insert(iterator position, InputIterator first, InputIterator last);
 
