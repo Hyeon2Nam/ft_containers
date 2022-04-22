@@ -1,160 +1,326 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-#include <vector>
+#include <cstddef>
+#include <iostream>
+#include <memory>
+#include "../iterator/Iterator.hpp"
+#include "../iterator/Reverse_iterator.hpp"
+#include "../utils/Utils.hpp"
 
-// #include <iostream>
-// #include <string>
-// #include "../iterator/Iterator.hpp"
+namespace ft
+{
+	template <typename T>
+	class random_access_iterator
+	{
+	public:
+		typedef typename ft::iterator_traits<T *>::value_type value_type;
+		typedef typename ft::iterator_traits<T *>::difference_type difference_type;
+		typedef typename ft::iterator_traits<T *>::pointer pointer;
+		typedef typename ft::iterator_traits<T *>::reference reference;
+		typedef typename ft::iterator_traits<T *>::iterator_category iterator_category;
 
-// class iterator;
-// class const_iterator;
-// class random_access_iterator;
-// class reverse_iterator;
-// class iterator_traits;
+	private:
+		T *_p;
 
-// namespace ft
-// {
-// 	template <class T, class Alloc = std::allocator<T> >
-// 	class vector
-// 	{
-// 	public:
-// 		typedef T value_type;
-// 		typedef Alloc allocator_type;
-// 		typedef allocator_type::reference reference;
-// 		typedef allocator_type::const_reference const_reference;
-// 		typedef allocator_type::pointer pointer;
-// 		typedef allocator_type::const_pointer const_pointer;
-// 		typedef random_access_iterator<value_type> iterator;
-// 		typedef random_access_iterator<const value_type> const_iterator;
-// 		typedef reverse_iterator<iterator> reverse_iterator;
-// 		typedef reverse_iterator<const iterator> const_reverse_iterator;
-// 		typedef typename iterator_traits<iterator>::difference_type difference_type;
-// 		typedef typename allocator_type::size_type size_type;
+	public:
+		random_access_iterator() : _p(0){};
+		random_access_iterator(T *p) : _p(p){};
+		random_access_iterator(const random_access_iterator &src) { *this = src; };
+		~random_access_iterator();
+		random_access_iterator &operator=(const random_access_iterator &rhs)
+		{
+			if (this != &rhs)
+			{
+				if (*_p)
+					delete _p;
+				this->_p = rhs._p;
+			}
+			return *this;
+		};
 
-// 	private:
-// 		value_type *arr;
+		random_access_iterator &operator++()
+		{
+			++_p;
+			return *this;
+		};
+		random_access_iterator operator++(int)
+		{
+			ft::random_access_iterator<T> tmp(*this);
+			++_p;
+			return tmp;
+		};
+		random_access_iterator &operator--()
+		{
+			--_p;
+			return *this;
+		};
+		random_access_iterator operator--(int)
+		{
+			ft::random_access_iterator<T> tmp(*this);
+			--_p;
+			return tmp;
+		};
+		random_access_iterator operator+(const difference_type n) const
+		{
+			return (_p + n);
+		};
+		random_access_iterator operator-(const difference_type n) const
+		{
+			return (_p - n);
+		};
+		random_access_iterator &operator+=(const difference_type n)
+		{
+			_p += n;
+			return (*this);
+		};
+		random_access_iterator &operator-=(const difference_type n)
+		{
+			_p -= n;
+			return (*this);
+		};
 
-// 	public:
-// 		/*
-// 		** ------------------------------- CONSTRUCTOR --------------------------------
-// 		*/
+		bool operator==(const random_access_iterator &rhs) const
+		{
+			return _p == rhs._p;
+		};
+		bool operator!=(const random_access_iterator &rhs) const
+		{
+			return _p != rhs._p;
+		};
+		bool operator<(const random_access_iterator &rhs) const
+		{
+			return _p < rhs._p;
+		};
+		bool operator>(const random_access_iterator &rhs) const
+		{
+			return _p > rhs._p;
+		};
+		bool operator>=(const random_access_iterator &rhs) const
+		{
+			return _p >= rhs._p;
+		};
+		bool operator<=(const random_access_iterator &rhs) const
+		{
+			return _p <= rhs._p;
+		};
 
-// 		vector(const allocator_type &alloc = allocator_type());
-// 		vector(size_type n, const value_type &val = value_type(),
-// 			   const allocator_type &alloc = allocator_type());
-// 		template <class InputIterator>
-// 		vector(InputIterator first, InputIterator last,
-// 			   const allocator_type &alloc = allocator_type());
-// 		vector(const vector &x);
+		reference operator*() const
+		{
+			return *_p;
+		};
+		pointer operator->() const
+		{
+			return _p;
+		};
+		reference operator[](difference_type n) const
+		{
+			return _p[n];
+		};
+	};
 
-// 		/*
-// 		** -------------------------------- DESTRUCTOR --------------------------------
-// 		*/
+	template <class T, class Alloc = std::allocator<T> >
+	class vector
+	{
+	public:
+		typedef T value_type;
+		typedef Alloc allocator_type;
+		typedef typename allocator_type::reference reference;
+		typedef typename allocator_type::const_reference const_reference;
+		typedef typename allocator_type::pointer pointer;
+		typedef typename allocator_type::const_pointer const_pointer;
+		typedef random_access_iterator<value_type> iterator;
+		typedef random_access_iterator<const value_type> const_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const iterator> const_reverse_iterator;
+		typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
+		typedef typename allocator_type::size_type size_type;
 
-// 		~vector();
+	private:
+		allocator_type _alloc;
+		pointer _arr;
+		size_type _size;
+		size_type _cap;
 
-// 		/*
-// 		** --------------------------------- operator= ---------------------------------
-// 		*/
+	public:
+		/*
+		** ------------------------------- CONSTRUCTOR --------------------------------
+		*/
+		explicit vector(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _arr(0), _size(0), _cap(0){};
+		explicit vector(size_type n, const value_type &val = value_type(),
+						const allocator_type &alloc = allocator_type())
+		{
+			_alloc = alloc;
+			_arr = _alloc.allocate(n);
+			_size = n;
+			_cap = n;
+			for (size_type i = 0; i < n; i++)
+				_alloc.construct(_arr + i, val);
+		};
 
-// 		vector &operator=(const vector &x);
+		template <class InputIterator>
+		vector(InputIterator first, InputIterator last,
+			   const allocator_type &alloc = allocator_type(),
+			   typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
+		{
+			_alloc = alloc;
+			_size = last - first;
+			_cap = _size;
+			_arr = _alloc.allocate(_size);
+			for (size_type i = 0; i < _size; i++)
+				_alloc.construct(_arr + i, *first++);
+		};
+		vector(const vector &x) { *this = x; };
 
-// 		/*
-// 		** -------------------------------- Iterators --------------------------------
-// 		*/
+		/*
+		** -------------------------------- DESTRUCTOR --------------------------------
+		*/
 
-// 		iterator begin();
-// 		const_iterator begin() const;
+		~vector()
+		{
+			if (_size != 0)
+			{
+				for (size_type i = 0; i < _size; i++)
+					_alloc.destroy(_arr + i);
+				_alloc.deallocate(_arr, _cap);
+			}
+		};
 
-// 		iterator end();
-// 		const_iterator end() const;
+		/*
+		** --------------------------------- operator= ---------------------------------
+		*/
 
-// 		reverse_iterator rbegin();
-// 		const_reverse_iterator rbegin() const;
+		vector &operator=(const vector &x)
+		{
+			if (this != &x)
+			{
+				if (this->_size != 0)
+				{
+					for (size_type i = 0; i < _size; i++)
+						_alloc.destroy(_arr + i);
+					_alloc.deallocate(_arr, _cap);
+				}
+				this->_alloc = x.get_allocator();
+				this->_size = x.size();
+				this->_cap = x.capacity();
+				this->_arr = this->_alloc.allocate(_cap);
+				for (size_type i = 0; i < this->_size; i++)
+					_alloc.construct(_arr + i, *(x._arr + i));
+			}
+			return *this;
+		};
 
-// 		reverse_iterator rend();
-// 		const_reverse_iterator rend() const;
+		void print_arr()
+		{
+			for (size_type i = 0; i < _size; i++)
+				std::cout << _arr[i] << " " << std::endl;
+		}
 
-// 		/*
-// 		** -------------------------------- Capacity --------------------------------
-// 		*/
+		/*
+		** -------------------------------- Iterators --------------------------------
+		*/
 
-// 		size_type size() const;
+		// iterator begin();
+		// const_iterator begin() const;
 
-// 		size_type max_size() const;
+		// iterator end();
+		// const_iterator end() const;
 
-// 		void resize(size_type n, value_type val = value_type());
+		// reverse_iterator rbegin();
+		// const_reverse_iterator rbegin() const;
 
-// 		size_type capacity() const;
+		// reverse_iterator rend();
+		// const_reverse_iterator rend() const;
 
-// 		bool empty() const;
+		// /*
+		// ** -------------------------------- Capacity --------------------------------
+		// */
 
-// 		void reserve(size_type n);
+		size_type size() const
+		{
+			return _size;
+		};
 
-// 		/*
-// 		** -------------------------------- Element access --------------------------------
-// 		*/
+		// size_type max_size() const;
 
-// 		reference operator[](size_type n);
-// 		const_reference operator[](size_type n) const;
+		// void resize(size_type n, value_type val = value_type());
 
-// 		reference at(size_type n);
-// 		const_reference at(size_type n) const;
+		size_type capacity() const
+		{
+			return _cap;
+		};
 
-// 		reference front();
-// 		const_reference front() const;
+		// bool empty() const;
 
-// 		reference back();
-// 		const_reference back() const;
+		// void reserve(size_type n);
 
-// 		/*
-// 		** -------------------------------- Modifiers --------------------------------
-// 		*/
+		// /*
+		// ** -------------------------------- Element access --------------------------------
+		// */
 
-// 		template <class InputIterator>
-// 		void assign(InputIterator first, InputIterator last);
-// 		void assign(size_type n, const value_type &val);
+		// reference operator[](size_type n);
+		// const_reference operator[](size_type n) const;
 
-// 		void push_back(const value_type &val);
-// 		void pop_back();
+		// reference at(size_type n);
+		// const_reference at(size_type n) const;
 
-// 		iterator insert(iterator position, const value_type &val);
-// 		void insert(iterator position, size_type n, const value_type &val);
-// 		template <class InputIterator>
-// 		void insert(iterator position, InputIterator first, InputIterator last);
+		// reference front();
+		// const_reference front() const;
 
-// 		iterator erase(iterator position);
-// 		iterator erase(iterator first, iterator last);
+		// reference back();
+		// const_reference back() const;
 
-// 		void swap(vector &x);
+		// /*
+		// ** -------------------------------- Modifiers --------------------------------
+		// */
 
-// 		void clear();
+		// template <class InputIterator>
+		// void assign(InputIterator first, InputIterator last);
+		// void assign(size_type n, const value_type &val);
 
-// 		/*
-// 		** -------------------------------- Allocator --------------------------------
-// 		*/
+		// void push_back(const value_type &val);
+		// void pop_back();
 
-// 		allocator_type get_allocator() const;
-// 	};
+		// iterator insert(iterator position, const value_type &val);
+		// void insert(iterator position, size_type n, const value_type &val);
+		// template <class InputIterator>
+		// void insert(iterator position, InputIterator first, InputIterator last);
 
-// 	template <class T, class Alloc>
-// 	bool operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
-// 	template <class T, class Alloc>
-// 	bool operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
-// 	template <class T, class Alloc>
-// 	bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
-// 	template <class T, class Alloc>
-// 	bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
-// 	template <class T, class Alloc>
-// 	bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
-// 	template <class T, class Alloc>
-// 	bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+		// iterator erase(iterator position);
+		// iterator erase(iterator first, iterator last);
 
-// 	template <class T, class Alloc>
-// 	void swap(vector<T, Alloc> &x, vector<T, Alloc> &y);
-// };
+		// void swap(vector &x);
 
-// #include "vector.tpp"
+		// void clear();
+
+		// /*
+		// ** -------------------------------- Allocator --------------------------------
+		// */
+
+		allocator_type get_allocator() const
+		{
+			return _alloc;
+		};
+	};
+
+	// template <class T, class Alloc>
+	// bool operator==(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+	// template <class T, class Alloc>
+	// bool operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+	// template <class T, class Alloc>
+	// bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+	// template <class T, class Alloc>
+	// bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+	// template <class T, class Alloc>
+	// bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+	// template <class T, class Alloc>
+	// bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs);
+
+	// template <class T, class Alloc>
+	// void swap(vector<T, Alloc> &x, vector<T, Alloc> &y)
+	// {
+	// 	x.swap(y);
+	// };
+};
 
 #endif /* ********************************************************** vector_H */

@@ -1,13 +1,18 @@
-#include "Iterator/iterator.hpp"
-#include "Iterator/Reverse_iterator.hpp"
+#include "vector/vector.hpp"
 #include <vector>
 
 int main()
 {
-	std::vector<int> a;
+	std::cout << "a :[";
+	ft::vector<int> a(3, 100);
+	a.print_arr();
 
-	for (int i = 0; i < 5; i++)
-		a.push_back(i);
-	for (std::vector<int>::iterator i = a.begin(); i != a.end(); i++)
+	std::cout << "]" << std::endl;
+
+	std::cout << "b :[";
+	std::vector<int> b(3, 100);
+	for (std::vector<int>::iterator i = b.begin(); i != b.end(); i++)
 		std::cout << *i << " " << std::endl;
+	std::cout << "]" << std::endl;
+	
 }

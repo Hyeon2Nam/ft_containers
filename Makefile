@@ -2,7 +2,7 @@ NAME = ft_containers
 CXX := c++
 RM := rm -rf
 CXXFLAGS := -Wall -Werror -Wextra -std=c++98 -Ivector/
-SRCS = 	./main.cpp
+SRCS = 	./src/main.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
