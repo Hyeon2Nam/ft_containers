@@ -21,21 +21,17 @@ namespace ft
 		typedef typename ft::iterator_traits<T *>::iterator_category iterator_category;
 
 	private:
-		T *_p;
+		pointer _p;
 
 	public:
 		random_access_iterator() : _p(0){};
-		random_access_iterator(T *p) : _p(p){};
+		random_access_iterator(pointer p) : _p(p){};
 		random_access_iterator(const random_access_iterator &src) { *this = src; };
-		~random_access_iterator();
+		~random_access_iterator(){};
+
 		random_access_iterator &operator=(const random_access_iterator &rhs)
 		{
-			if (this != &rhs)
-			{
-				if (*_p)
-					delete _p;
-				this->_p = rhs._p;
-			}
+			this->_p = rhs._p;
 			return *this;
 		};
 
@@ -46,7 +42,7 @@ namespace ft
 		};
 		random_access_iterator operator++(int)
 		{
-			ft::random_access_iterator<T> tmp(*this);
+			random_access_iterator tmp(*this);
 			++_p;
 			return tmp;
 		};
@@ -57,7 +53,7 @@ namespace ft
 		};
 		random_access_iterator operator--(int)
 		{
-			ft::random_access_iterator<T> tmp(*this);
+			random_access_iterator<T> tmp(*this);
 			--_p;
 			return tmp;
 		};
@@ -170,10 +166,7 @@ namespace ft
 			for (size_type i = 0; i < _size; i++)
 				_alloc.construct(_arr + i, *first++);
 		};
-		vector(const vector &x) : _arr(0), _size(0), _cap(0)
-		{
-			*this = x;
-		};
+		vector(const vector &x) : _arr(0), _size(0), _cap(0) { *this = x; };
 
 		/*
 		** -------------------------------- DESTRUCTOR --------------------------------
@@ -212,12 +205,6 @@ namespace ft
 			}
 			return *this;
 		};
-
-		void print_arr()
-		{
-			for (size_type i = 0; i < _size; i++)
-				std::cout << *(_arr + i) << " ";
-		}
 
 		/*
 		** -------------------------------- Iterators --------------------------------
