@@ -170,7 +170,10 @@ namespace ft
 			for (size_type i = 0; i < _size; i++)
 				_alloc.construct(_arr + i, *first++);
 		};
-		vector(const vector &x) { *this = x; };
+		vector(const vector &x) : _arr(0), _size(0), _cap(0)
+		{
+			*this = x;
+		};
 
 		/*
 		** -------------------------------- DESTRUCTOR --------------------------------
@@ -203,7 +206,7 @@ namespace ft
 				this->_alloc = x.get_allocator();
 				this->_size = x.size();
 				this->_cap = x.capacity();
-				this->_arr = this->_alloc.allocate(_cap);
+				this->_arr = this->_alloc.allocate(this->_cap);
 				for (size_type i = 0; i < this->_size; i++)
 					_alloc.construct(_arr + i, *(x._arr + i));
 			}
@@ -213,24 +216,24 @@ namespace ft
 		void print_arr()
 		{
 			for (size_type i = 0; i < _size; i++)
-				std::cout << _arr[i] << " " << std::endl;
+				std::cout << *(_arr + i) << " ";
 		}
 
 		/*
 		** -------------------------------- Iterators --------------------------------
 		*/
 
-		// iterator begin();
-		// const_iterator begin() const;
+		iterator begin() { return iterator(_arr); };
+		const_iterator begin() const { return const_iterator(_arr); };
 
-		// iterator end();
-		// const_iterator end() const;
+		iterator end() { return iterator(_arr + _size); };
+		const_iterator end() const { return const_iterator(_arr + _size); };
 
-		// reverse_iterator rbegin();
-		// const_reverse_iterator rbegin() const;
+		reverse_iterator rbegin() { return reverse_iterator(end()); };
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); };
 
-		// reverse_iterator rend();
-		// const_reverse_iterator rend() const;
+		reverse_iterator rend() { return reverse_iterator(begin()); };
+		const_reverse_iterator rend() const { return const_reverse_iterator(begin()); };
 
 		// /*
 		// ** -------------------------------- Capacity --------------------------------
@@ -241,7 +244,10 @@ namespace ft
 			return _size;
 		};
 
-		// size_type max_size() const;
+		size_type max_size() const
+		{
+			return _alloc.max_size();
+		};
 
 		// void resize(size_type n, value_type val = value_type());
 
