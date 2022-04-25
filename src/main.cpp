@@ -7,16 +7,20 @@ int main()
 	ft::vector<int> a(3, 100);
 
 	// for (size_t i = 0; i < 5; i++)
-		// a.push_back(i);
+	// 	a.push_back(i);
+
 
 	std::cout << "a :[";
-	for (ft::vector<int>::reverse_iterator i = a.rbegin(); i != a.rend(); i++)
+	for (ft::vector<int>::iterator i = a.begin(); i != a.end(); i++)
 		std::cout << *i << " ";
 	std::cout << "]" << std::endl;
 
 	// ======== [std] ========
 
 	std::vector<int> b(3, 100);
+	
+
+
 
 	// for (size_t i = 0; i < 5; i++)
 	// 	a.push_back(i);

@@ -257,7 +257,10 @@ namespace ft
 
 		void resize(size_type n, value_type val = value_type())
 		{
-			if (n < _size || n > max_size())
+			if (n < 0 || n > max_size())
+				throw std::length_error("vector");
+
+			if (n < _size)
 			{
 				for (size_type i = n; i < _size; i++)
 					_alloc.destroy(_arr + n);
