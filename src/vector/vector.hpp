@@ -121,7 +121,23 @@ namespace ft
 	typename random_access_iterator<T>::difference_type operator-(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) - &(*rhs); }
 
-	template <class T, class Alloc = std::allocator<T>>
+	template <class T>
+	typename random_access_iterator<T>::difference_type operator+(
+		typename random_access_iterator<T>::difference_type n,
+		const random_access_iterator<T> &it)
+	{
+		return it + n;
+	};
+
+	template <class T>
+	typename random_access_iterator<T>::difference_type operator-(
+		typename random_access_iterator<T>::difference_type n,
+		const random_access_iterator<T> &it)
+	{
+		return it - n;
+	};
+
+	template <class T, class Alloc = std::allocator<T> >
 	class vector
 	{
 	public:
