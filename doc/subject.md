@@ -155,8 +155,8 @@ This is asked so you can discover SFINAE.
 SFINAE를 찾을 수 있도록 질문합니다.
 
 • is_integral - o
-• equal
-• lexicographical_compare
+• equal - o
+• lexicographical_compare - o
 • std::pair
 • std::make_pair
 
