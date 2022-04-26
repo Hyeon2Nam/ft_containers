@@ -4,10 +4,11 @@
 int main()
 {
 	// ======== [ft] ========
+	ft::vector<int> d(5, 200);
 	ft::vector<int> a(3, 100);
 
-	// for (size_t i = 0; i < 5; i++)
-	// 	a.push_back(i);
+
+	a.insert(a.begin() + 2, d.begin(), d.end());
 
 
 	std::cout << "a :[";
@@ -15,16 +16,13 @@ int main()
 		std::cout << *i << " ";
 	std::cout << "]" << std::endl;
 
+
 	// ======== [std] ========
 
+	std::vector<int> c(5, 200);
 	std::vector<int> b(3, 100);
-	
 
-
-
-	// for (size_t i = 0; i < 5; i++)
-	// 	a.push_back(i);
-
+	b.insert(b.begin() + 2, c.begin(), c.end());
 
 	std::cout << "b :[";
 	for (std::vector<int>::iterator i = b.begin(); i != b.end(); i++)

@@ -160,6 +160,14 @@ namespace ft
 		size_type _size;
 		size_type _cap;
 
+		void print_arr(pointer &arr)
+		{
+			std::cout << "arr [";
+			for (size_type i = 0; i < _size; i++)
+				std::cout << *(arr + i) << " ";
+			std::cout << "]" << std::endl;
+		}
+
 	public:
 		/*
 		** ------------------------------- CONSTRUCTOR --------------------------------
@@ -371,22 +379,24 @@ namespace ft
 			if (_size + 1 > max_size())
 				return;
 			if (_size + 1 >= _cap)
+			{
+				if (!_cap)
+					reserve(1);
 				reserve(_cap * 2);
+			}
 			_alloc.construct(_arr + _size, val);
 			++_size;
 		};
 
 		void pop_back()
 		{
-			if (!_size)
-				return;
 			--_size;
 			_alloc.destroy(_arr + _size);
 		};
 
 		iterator insert(iterator position, const value_type &val)
 		{
-			difference_type diff = position - _arr;
+			difference_type diff = position - begin();
 			pointer tmp;
 			difference_type i = 0;
 
@@ -412,7 +422,7 @@ namespace ft
 		};
 		void insert(iterator position, size_type n, const value_type &val)
 		{
-			difference_type diff = position - _arr;
+			difference_type diff = position - begin();
 			pointer tmp;
 			difference_type i = 0;
 
@@ -424,13 +434,13 @@ namespace ft
 				_alloc.construct(tmp + i, *(_arr + i));
 			for (; i < diff + static_cast<difference_type>(n); i++)
 				_alloc.construct(tmp + i, val);
-			i++;
 			for (; i < static_cast<difference_type>(_size + n); i++)
 				_alloc.construct(tmp + i, *(_arr + (i - static_cast<difference_type>(n))));
 
 			for (size_type i = 0; i < _size - 1; i++)
 				_alloc.destroy(_arr + i);
 			_alloc.deallocate(_arr, _cap);
+
 			_size += n;
 			_arr = tmp;
 		};
@@ -441,7 +451,7 @@ namespace ft
 			if (first > last)
 				return;
 
-			difference_type pos = position - _arr;
+			difference_type pos = position - begin();
 			difference_type diff = last - first;
 			difference_type i = 0;
 			pointer tmp;
@@ -452,8 +462,8 @@ namespace ft
 			tmp = _alloc.allocate(_cap);
 			for (; i < pos; i++)
 				_alloc.construct(tmp + i, *(_arr + i));
-			for (; first != last; i++)
-				_alloc.construct(tmp + i, (*first)++);
+			for (difference_type i2 = 0; i2 < diff; i2++, i++)
+				_alloc.construct(tmp + i, *(first + i2));
 			for (; i < static_cast<difference_type>(_size) + diff; i++)
 				_alloc.construct(tmp + i, *(_arr + (i - diff)));
 
@@ -476,7 +486,7 @@ namespace ft
 				is_end = true;
 
 			pointer tmp = _alloc.allocate(_cap);
-			difference_type diff = position - _arr;
+			difference_type diff = position - begin();
 			size_type i = 0;
 
 			for (; i < diff; i++)
@@ -505,7 +515,7 @@ namespace ft
 			if (last == end())
 				is_end = true;
 			pointer tmp = _alloc.allocate(_cap);
-			difference_type diff = first - _arr;
+			difference_type diff = first - begin();
 			difference_type diff2 = last - first;
 			size_type i = 0;
 
