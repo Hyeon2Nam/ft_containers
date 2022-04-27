@@ -24,7 +24,7 @@ namespace ft
 	public:
 		operator reverse_iterator<const Iterator>() const
 		{
-			return (reverse_iterator<const Iterator>(this->base_iterator));
+			return (reverse_iterator<const Iterator>(base_iterator));
 		};
 
 		reverse_iterator() : base_iterator(){};
@@ -111,28 +111,28 @@ namespace ft
 	bool operator<(const reverse_iterator<A> &lhs,
 				   const reverse_iterator<B> &rhs)
 	{
-		return (lhs.base() < rhs.base());
+		return rhs.base() < lhs.base();
 	};
 
 	template <typename A, typename B>
 	bool operator<=(const reverse_iterator<A> &lhs,
 					const reverse_iterator<B> &rhs)
 	{
-		return (lhs.base() <= rhs.base());
+		return !(rhs < lhs);
 	};
 
 	template <typename A, typename B>
 	bool operator>(const reverse_iterator<A> &lhs,
 				   const reverse_iterator<B> &rhs)
 	{
-		return (lhs.base() > rhs.base());
+		return rhs < lhs;
 	};
 
 	template <typename A, typename B>
 	bool operator>=(const reverse_iterator<A> &lhs,
 					const reverse_iterator<B> &rhs)
 	{
-		return (lhs.base() >= rhs.base());
+		return !(lhs < rhs);
 	};
 
 	template <typename T>
@@ -164,7 +164,7 @@ namespace ft
 		const reverse_iterator<A> &lhs,
 		const reverse_iterator<B> &rhs)
 	{
-		return lhs.base() - rhs.base();
+		return rhs.base() - lhs.base();
 	};
 };
 
