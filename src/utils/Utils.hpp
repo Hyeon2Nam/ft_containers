@@ -6,8 +6,8 @@
 
 namespace ft
 {
-	template <class InputIterator1, class InputIterator2>
-	bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+	template <class T1, class T2>
+	bool equal(T1 first1, T1 last1, T2 first2)
 	{
 		while (first1 != last1)
 		{
@@ -19,8 +19,8 @@ namespace ft
 		return true;
 	};
 
-	template <class InputIterator1, class InputIterator2, class BinaryPredicate>
-	bool equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
+	template <class T1, class T2, class BinaryPredicate>
+	bool equal(T1 first1, T1 last1, T2 first2, BinaryPredicate pred)
 	{
 		while (first1 != last1)
 		{
@@ -32,8 +32,8 @@ namespace ft
 		return true;
 	};
 
-	template <class InputIterator1, class InputIterator2>
-	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2)
+	template <class T1, class T2>
+	bool lexicographical_compare(T1 first1, T1 last1, T2 first2, T2 last2)
 	{
 		while (first1 != last1)
 		{
@@ -47,8 +47,8 @@ namespace ft
 		return (first2 != last2);
 	};
 
-	template <class InputIterator1, class InputIterator2, class Compare>
-	bool lexicographical_compare(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, Compare comp)
+	template <class T1, class T2, class Compare>
+	bool lexicographical_compare(T1 first1, T1 last1, T2 first2, T2 last2, Compare comp)
 	{
 		for (; first2 != last2; ++first1, (void)++first2)
 		{
@@ -60,11 +60,11 @@ namespace ft
 		return false;
 	};
 
-	template <class InputIterator>
-	typename ft::iterator_traits<InputIterator>::difference_type
-	distance(InputIterator first, InputIterator last)
+	template <class T>
+	typename ft::iterator_traits<T>::difference_type
+	distance(T first, T last)
 	{
-		typename ft::iterator_traits<InputIterator>::difference_type i = 0;
+		typename ft::iterator_traits<T>::difference_type i = 0;
 		for (; first != last; i++)
 			first++;
 		return i;
@@ -172,6 +172,16 @@ namespace ft
 	struct is_integral<unsigned long long int> : public true_type
 	{
 	};
+
+	template <class InputIter>
+	typename ft::iterator_traits<InputIter>::difference_type diff(InputIter first, InputIter last)
+	{
+		typename ft::iterator_traits<InputIter>::difference_type i = 0;
+
+		for (; first != last; ++first)
+			++i;
+		return (i);
+	}
 };
 
 #endif /* *********************************************************** UTILS_H */

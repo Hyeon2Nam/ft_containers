@@ -37,4 +37,4 @@
 
 .vscode
 
-/containers_test
+./src/containers_test/*

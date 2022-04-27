@@ -11,6 +11,8 @@
 
 namespace ft
 {
+	class const_iterator;
+
 	template <typename T>
 	class random_access_iterator
 	{
@@ -80,37 +82,44 @@ namespace ft
 
 		reference operator*() const { return *_p; };
 		pointer operator->() const { return _p; };
-		reference operator[](difference_type n) const { return _p[n]; };
-	};
+		reference operator[](difference_type n) const
+		{
+			return _p[n];
+		};
 
+		operator random_access_iterator<const T>() const
+		{
+			return (random_access_iterator<const T>(this->_p));
+		};
+	};
 	template <typename T>
-	typename random_access_iterator<T>::difference_type operator==(
+	bool operator==(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
 	{
 		return &(*lhs) == &(*rhs);
 	}
 
 	template <typename T>
-	typename random_access_iterator<T>::difference_type operator!=(
+	bool operator!=(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
 	{
 		return &(*lhs) != &(*rhs);
 	}
 
 	template <typename T>
-	typename random_access_iterator<T>::difference_type operator<(
+	bool operator<(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) < &(*rhs); }
 
 	template <typename T>
-	typename random_access_iterator<T>::difference_type operator>(
+	bool operator>(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) > &(*rhs); }
 
 	template <typename T>
-	typename random_access_iterator<T>::difference_type operator<=(
+	bool operator<=(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) <= &(*rhs); }
 
 	template <typename T>
-	typename random_access_iterator<T>::difference_type operator>=(
+	bool operator>=(
 		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) >= &(*rhs); }
 
 	template <typename T>
@@ -160,14 +169,6 @@ namespace ft
 		size_type _size;
 		size_type _cap;
 
-		void print_arr(pointer &arr)
-		{
-			std::cout << "arr [";
-			for (size_type i = 0; i < _size; i++)
-				std::cout << *(arr + i) << " ";
-			std::cout << "]" << std::endl;
-		}
-
 	public:
 		/*
 		** ------------------------------- CONSTRUCTOR --------------------------------
@@ -189,11 +190,12 @@ namespace ft
 			   const allocator_type &alloc = allocator_type(),
 			   typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
 		{
-			if (first > last)
+
+			if (0 > ft::diff(first, last))
 				throw std::length_error("vector");
 
 			_alloc = alloc;
-			_size = last - first;
+			_size = ft::diff(first, last);
 			_cap = _size;
 			_arr = _alloc.allocate(_size);
 			for (size_type i = 0; i < _size; i++)
@@ -348,13 +350,13 @@ namespace ft
 		void assign(InputIterator first, InputIterator last,
 					typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
 		{
-			if (first > last)
+			if (ft::diff(first, last) < 0)
 				throw std::length_error("vector");
 
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_arr + i);
 
-			_size = last - first;
+			_size = ft::diff(first, last);
 			_cap = _size;
 			_arr = _alloc.allocate(_cap);
 			for (size_type i = 0; i < _size; i++)
@@ -396,10 +398,13 @@ namespace ft
 
 		iterator insert(iterator position, const value_type &val)
 		{
-			difference_type diff = position - begin();
+
+			difference_type diff = ft::diff(begin(), position);
 			pointer tmp;
 			difference_type i = 0;
 
+			if (!_cap)
+				_cap = 1;
 			if (_size + 1 >= _cap)
 				_cap *= 2;
 
@@ -422,9 +427,12 @@ namespace ft
 		};
 		void insert(iterator position, size_type n, const value_type &val)
 		{
-			difference_type diff = position - begin();
+			difference_type diff = ft::diff(begin(), position);
 			pointer tmp;
 			difference_type i = 0;
+
+			if (!_cap)
+				_cap = 1;
 
 			while (_size + n >= _cap)
 				_cap *= 2;
@@ -448,13 +456,16 @@ namespace ft
 		template <class InputIterator>
 		void insert(iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0)
 		{
-			if (first > last)
+			if (ft::diff(first, last) < 0)
 				return;
 
-			difference_type pos = position - begin();
-			difference_type diff = last - first;
+			difference_type pos = ft::diff(begin(), position);
+			difference_type diff = ft::diff(first, last);
 			difference_type i = 0;
 			pointer tmp;
+
+			if (!_cap)
+				_cap = 1;
 
 			while (_size + static_cast<size_type>(diff) >= _cap)
 				_cap *= 2;
@@ -463,7 +474,10 @@ namespace ft
 			for (; i < pos; i++)
 				_alloc.construct(tmp + i, *(_arr + i));
 			for (difference_type i2 = 0; i2 < diff; i2++, i++)
-				_alloc.construct(tmp + i, *(first + i2));
+			{
+				_alloc.construct(tmp + i, *first);
+				first++;
+			}
 			for (; i < static_cast<difference_type>(_size) + diff; i++)
 				_alloc.construct(tmp + i, *(_arr + (i - diff)));
 
@@ -477,19 +491,16 @@ namespace ft
 
 		iterator erase(iterator position)
 		{
-			if (_size - 1 < 0)
-				return;
-
 			bool is_end = false;
 
 			if (position == end())
 				is_end = true;
 
 			pointer tmp = _alloc.allocate(_cap);
-			difference_type diff = position - begin();
+			difference_type diff = ft::diff(begin(), position);
 			size_type i = 0;
 
-			for (; i < diff; i++)
+			for (; i < static_cast<size_type>(diff); i++)
 				_alloc.construct(tmp + i, *(_arr + i));
 			i++;
 			for (; i < _size; i++)
@@ -505,7 +516,7 @@ namespace ft
 			if (is_end)
 				return (end());
 
-			return (_arr + diff);
+			return iterator(_arr + diff);
 		};
 
 		iterator erase(iterator first, iterator last)
@@ -515,8 +526,8 @@ namespace ft
 			if (last == end())
 				is_end = true;
 			pointer tmp = _alloc.allocate(_cap);
-			difference_type diff = first - begin();
-			difference_type diff2 = last - first;
+			size_type diff = ft::diff(begin(), first);
+			size_type diff2 = ft::diff(first, last);
 			size_type i = 0;
 
 			for (; i < diff; i++)
@@ -535,7 +546,7 @@ namespace ft
 			if (is_end)
 				return end();
 
-			return (_arr + diff);
+			return iterator(_arr + diff);
 		};
 
 		void swap(vector &x)
