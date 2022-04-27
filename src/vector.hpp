@@ -5,9 +5,9 @@
 #include <iostream>
 #include <memory>
 #include <exception>
-#include "../iterator/Iterator.hpp"
-#include "../iterator/Reverse_iterator.hpp"
-#include "../utils/Utils.hpp"
+#include "Iterator.hpp"
+#include "Reverse_iterator.hpp"
+#include "Utils.hpp"
 
 namespace ft
 {

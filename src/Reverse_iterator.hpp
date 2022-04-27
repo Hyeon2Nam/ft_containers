@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "Iterator.hpp"
-#include "../vector/vector.hpp"
+#include "vector.hpp"
 
 namespace ft
 {
