@@ -1,13 +1,11 @@
-#include "Iterator/iterator.hpp"
-#include "Iterator/Reverse_iterator.hpp"
+#include "vector/vector.hpp"
 #include <vector>
+#include <algorithm>
+#include <list>
 
-int main()
+int		main(void)
 {
-	std::vector<int> a;
 
-	for (int i = 0; i < 5; i++)
-		a.push_back(i);
-	for (std::vector<int>::iterator i = a.begin(); i != a.end(); i++)
-		std::cout << *i << " " << std::endl;
+	return (0);
 }
+

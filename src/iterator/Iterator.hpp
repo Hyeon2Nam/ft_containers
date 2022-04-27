@@ -1,6 +1,7 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
+#include <cstddef>
 #include <iostream>
 
 namespace ft
@@ -19,6 +20,22 @@ namespace ft
 	};
 	struct random_access_iterator_tag : public bidirectional_iterator_tag
 	{
+	};
+
+	template <class Category,			  // iterator::iterator_category
+			  class T,					  // iterator::value_type
+			  class Distance = ptrdiff_t, // iterator::difference_type
+			  class Pointer = T *,		  // iterator::pointer
+			  class Reference = T &		  // iterator::reference
+			  >
+	class iterator
+	{
+	public:
+		typedef T value_type;
+		typedef Distance difference_type;
+		typedef Pointer pointer;
+		typedef Reference reference;
+		typedef Category iterator_category;
 	};
 
 	template <class Iterator>
@@ -47,72 +64,13 @@ namespace ft
 	class iterator_traits<const T *>
 	{
 	public:
-		typedef T value_type;
+		typedef const T value_type;
 		typedef ptrdiff_t difference_type;
 		typedef random_access_iterator_tag iterator_category;
 		typedef const T *pointer;
 		typedef const T &reference;
 	};
 
-	template <class Category,			  // iterator::iterator_category
-			  class T,					  // iterator::value_type
-			  class Distance = ptrdiff_t, // iterator::difference_type
-			  class Pointer = T *,		  // iterator::pointer
-			  class Reference = T &		  // iterator::reference
-			  >
-	class iterator
-	{
-	public:
-		typedef T value_type;
-		typedef Distance difference_type;
-		typedef Pointer pointer;
-		typedef Reference reference;
-		typedef Category iterator_category;
-	};
-
-	template <typename T>
-	class random_access_iterator : public ft::iterator<ft::random_access_iterator_tag, T>
-	{
-	public:
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::value_type value_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::difference_type difference_type;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::pointer pointer;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::reference reference;
-		typedef typename ft::iterator<ft::random_access_iterator_tag, T>::iterator_category iterator_category;
-
-	private:
-		T *_p;
-
-	public:
-		random_access_iterator();
-		random_access_iterator(T *p);
-		random_access_iterator(const random_access_iterator &src);
-		~random_access_iterator();
-		random_access_iterator &operator=(const random_access_iterator &rhs);
-
-		random_access_iterator &operator++();
-		random_access_iterator operator++(int);
-		random_access_iterator &operator--();
-		random_access_iterator operator--(int);
-		random_access_iterator operator+(const difference_type n) const;
-		random_access_iterator operator-(const difference_type n) const;
-		random_access_iterator &operator+=(const difference_type n);
-		random_access_iterator &operator-=(const difference_type n);
-
-		bool operator==(const random_access_iterator &rhs) const;
-		bool operator!=(const random_access_iterator &rhs) const;
-		bool operator<(const random_access_iterator &rhs) const;
-		bool operator>(const random_access_iterator &rhs) const;
-		bool operator>=(const random_access_iterator &rhs) const;
-		bool operator<=(const random_access_iterator &rhs) const;
-
-		reference operator*() const;
-		pointer operator->() const;
-		reference operator[](difference_type n) const;
-	};
-
 } // namespace ft
-
-#include "iterator.tpp"
 
 #endif

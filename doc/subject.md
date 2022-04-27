@@ -145,18 +145,18 @@ But if you want to do the bonus part, you have to implement the 3 mandatory cont
 You also have to implement:
 또한 다음을 구현해야 합니다.
 
-• iterators_traits
-• reverse_iterator
-• enable_if
+• iterators_traits - o
+• reverse_iterator - o
+• enable_if - o
 Yes, it is C++11 but you will be able to implement it in a C++98 manner.
 네, C++11이지만 C++98 방식으로 구현할 수 있습니다.
 
 This is asked so you can discover SFINAE.
 SFINAE를 찾을 수 있도록 질문합니다.
 
-• is_integral
-• equal
-• lexicographical_compare
+• is_integral - o
+• equal - o
+• lexicographical_compare - o
 • std::pair
 • std::make_pair
 
