@@ -3,15 +3,12 @@
 #include <algorithm>
 #include <list>
 
-
-
-
 #define TESTED_TYPE std::string
 #define TESTED_NAMESPACE ft
 #define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
 
 template <typename T>
-void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
+void printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
 {
 	const T_SIZE_TYPE size = vct.size();
 	const T_SIZE_TYPE capacity = vct.capacity();
@@ -25,7 +22,8 @@ void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true
 	{
 		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
 		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
-		std::cout << std::endl << "Content is:" << std::endl;
+		std::cout << std::endl
+				  << "Content is:" << std::endl;
 		for (; it != ite; ++it)
 			std::cout << "- " << *it << std::endl;
 	}
@@ -45,11 +43,11 @@ int		main(void)
 {
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(10);
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = std::string((vct.size() - i), i + 65);
-	printSize(vct);
+	// for (unsigned long int i = 0; i < vct.size(); ++i)
+	// 	vct[i] = std::string((vct.size() - i), i + 65);
+	// printSize(vct);
 
-	checkErase(vct, vct.erase(vct.begin() + 2));
+	// checkErase(vct, vct.erase(vct.begin() + 2));
 
 	// checkErase(vct, vct.erase(vct.begin()));
 	// checkErase(vct, vct.erase(vct.end() - 1));

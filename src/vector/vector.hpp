@@ -32,6 +32,11 @@ namespace ft
 		random_access_iterator(const random_access_iterator &src) { *this = src; };
 		~random_access_iterator(){};
 
+		operator random_access_iterator<const T>() const
+		{
+			return (random_access_iterator<const T>(this->_p));
+		};
+
 		random_access_iterator &operator=(const random_access_iterator &rhs)
 		{
 			this->_p = rhs._p;
@@ -86,52 +91,47 @@ namespace ft
 		{
 			return _p[n];
 		};
-
-		operator random_access_iterator<const T>() const
-		{
-			return (random_access_iterator<const T>(this->_p));
-		};
 	};
-	template <typename T>
+	template <typename A, typename B>
 	bool operator==(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs)
 	{
 		return &(*lhs) == &(*rhs);
 	}
 
-	template <typename T>
+	template <typename A, typename B>
 	bool operator!=(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs)
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs)
 	{
 		return &(*lhs) != &(*rhs);
 	}
 
-	template <typename T>
+	template <typename A, typename B>
 	bool operator<(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) < &(*rhs); }
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs) { return &(*lhs) < &(*rhs); }
 
-	template <typename T>
+	template <typename A, typename B>
 	bool operator>(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) > &(*rhs); }
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs) { return &(*lhs) > &(*rhs); }
 
-	template <typename T>
+	template <typename A, typename B>
 	bool operator<=(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) <= &(*rhs); }
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs) { return &(*lhs) <= &(*rhs); }
 
-	template <typename T>
+	template <typename A, typename B>
 	bool operator>=(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) >= &(*rhs); }
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs) { return &(*lhs) >= &(*rhs); }
 
-	template <typename T>
-	typename random_access_iterator<T>::difference_type operator+(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) + &(*rhs); }
+	template <typename A, typename B>
+	typename random_access_iterator<A>::difference_type operator+(
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs) { return &(*lhs) + &(*rhs); }
 
-	template <typename T>
-	typename random_access_iterator<T>::difference_type operator-(
-		const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return &(*lhs) - &(*rhs); }
+	template <typename A, typename B>
+	typename random_access_iterator<A>::difference_type operator-(
+		const random_access_iterator<A> &lhs, const random_access_iterator<B> &rhs) { return &(*lhs) - &(*rhs); }
 
 	template <class T>
-	typename random_access_iterator<T>::difference_type operator+(
+	random_access_iterator<T> operator+(
 		typename random_access_iterator<T>::difference_type n,
 		const random_access_iterator<T> &it)
 	{
@@ -139,7 +139,7 @@ namespace ft
 	};
 
 	template <class T>
-	typename random_access_iterator<T>::difference_type operator-(
+	random_access_iterator<T> operator-(
 		typename random_access_iterator<T>::difference_type n,
 		const random_access_iterator<T> &it)
 	{
@@ -590,33 +590,37 @@ namespace ft
 		if (lhs.size() != rhs.size())
 			return false;
 
-		return equal(lhs.begin(), lhs.end(), rhs.begin());
+		return ft::equal(lhs.begin(), lhs.end(), rhs.begin());
 	};
 	template <class T, class Alloc>
 	bool operator!=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
 	{
 		return !(lhs == rhs);
 	};
+
 	template <class T, class Alloc>
 	bool operator<(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
 	{
-		ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+		return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	};
+
 	template <class T, class Alloc>
 	bool operator<=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
 	{
 		return !(rhs < lhs);
 	};
+
 	template <class T, class Alloc>
-	bool operator>(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+  	bool operator>(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 	{
-		return lhs < rhs;
-	};
+		return rhs < lhs;
+	}
+
 	template <class T, class Alloc>
-	bool operator>=(const vector<T, Alloc> &lhs, const vector<T, Alloc> &rhs)
+	bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 	{
 		return !(lhs < rhs);
-	};
+	}
 
 	template <class T, class Alloc>
 	void swap(vector<T, Alloc> &x, vector<T, Alloc> &y)
