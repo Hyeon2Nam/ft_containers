@@ -38,5 +38,4 @@
 .vscode
 
 ft_containers
-
-./containers_test/*
+src/containers_test
