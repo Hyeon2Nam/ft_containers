@@ -60,16 +60,6 @@ namespace ft
 		return false;
 	};
 
-	template <class T>
-	typename ft::iterator_traits<T>::difference_type
-	distance(T first, T last)
-	{
-		typename ft::iterator_traits<T>::difference_type i = 0;
-		for (; first != last; i++)
-			first++;
-		return i;
-	};
-
 	template <bool Cond, class T = void>
 	struct enable_if
 	{
