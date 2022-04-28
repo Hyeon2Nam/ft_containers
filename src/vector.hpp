@@ -424,7 +424,6 @@ namespace ft
 
 		iterator insert(iterator position, const value_type &val)
 		{
-
 			difference_type diff = ft::diff(begin(), position);
 			pointer tmp;
 			difference_type i = 0;
