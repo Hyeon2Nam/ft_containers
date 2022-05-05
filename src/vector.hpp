@@ -11,8 +11,6 @@
 
 namespace ft
 {
-	class const_iterator;
-
 	template <typename T>
 	class random_access_iterator
 	{
