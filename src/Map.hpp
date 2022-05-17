@@ -85,8 +85,8 @@ namespace ft
 		};
 
 	private:
-		typedef map_value_compare<key_type, value_type, key_compare> vc;
-		typedef ft::tree<value_type, vc, allocator_type> _base;
+		// typedef map_value_compare<key_type, value_type, key_compare> vc;
+		typedef ft::tree<value_type, allocator_type> _base;
 
 		_base _tree;
 		key_compare comp;
@@ -97,14 +97,12 @@ namespace ft
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		explicit map(const key_compare &comp = key_compare(),
-					 const allocator_type &alloc = allocator_type()) : _tree(comp, alloc){};
+		explicit map(const allocator_type &alloc = allocator_type()) : _tree(alloc){};
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last,
-			const key_compare &comp = key_compare(),
 			const allocator_type &alloc = allocator_type(),
-			typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0) : _tree(comp, alloc)
+			typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0) : _tree(alloc)
 		{
 			insert(first, last);
 		};
@@ -162,9 +160,9 @@ namespace ft
 
 		void clear() { _tree.clear(); };
 
-		key_compare key_comp() const { return _tree.key_comp(); };
+		key_compare key_comp() const { return comp; };
 
-		value_compare value_comp() const { return value_comp(_tree.key_comp()); };
+		value_compare value_comp() const { return value_compare(key_comp()); };
 
 		iterator find(const key_type &k) { return _tree.find(k); };
 		const_iterator find(const key_type &k) const { return _tree.find(k); };

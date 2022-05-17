@@ -138,13 +138,13 @@ namespace ft
 		};
 	};
 
-	template <class Tp, class Compare, class Allocator = std::allocator<Tp> >
+	template <class Tp, class Allocator = std::allocator<Tp> >
 	class tree
 	{
 	public:
 		typedef Tp value_type;
 		typedef typename Tp::first_type key_type;
-		typedef Compare key_compare;
+		// typedef Compare key_compare;
 		typedef Allocator allocator_type;
 		typedef Node<Tp> node_type;
 		typedef Node<Tp> *node_pointer;
@@ -165,15 +165,14 @@ namespace ft
 	private:
 		size_type _size;
 		alloc_node _alloc;
-		key_compare cmp;
+		// key_compare cmp;
 
 		node_pointer root;
 		node_pointer begin_node;
 		node_pointer end_node;
 
 	public:
-		explicit tree(const key_compare &comp = key_compare(),
-					  const allocator_type &alloc = allocator_type()) : _alloc(alloc), cmp(comp)
+		explicit tree(const allocator_type &alloc = allocator_type()) : _alloc(alloc)
 		{
 			_size = 0;
 
@@ -203,7 +202,7 @@ namespace ft
 			{
 				this->_size = t._size;
 				this->_alloc = t._alloc;
-				this->cmp = t.cmp;
+				// this->cmp = t.cmp;
 				insert(t.begin(), t.end());
 			}
 
@@ -382,21 +381,18 @@ namespace ft
 			node_pointer te = x.end_node;
 			size_type ts = x._size;
 			alloc_node ta = x._alloc;
-			key_compare tc = x.cmp;
 
 			x.root = this->root;
 			x.begin_node = this->begin_node;
 			x.end_node = this->end_node;
 			x._size = this->_size;
 			x._alloc = this->_alloc;
-			x.xmp = this->cmp;
 
 			this->root = tt;
 			this->begin_node = tb;
 			this->end_node = te;
 			this->_size = ts;
 			this->_alloc = ta;
-			this->cmp = tc;
 		}
 
 		void delete_node(node_pointer node)
@@ -411,10 +407,10 @@ namespace ft
 
 		void clear() { delete_node(root); };
 
-		key_compare key_comp() const
-		{
-			return cmp;
-		};
+		// key_compare key_comp() const
+		// {
+		// 	return cmp;
+		// };
 
 		iterator find(const key_type &k)
 		{
