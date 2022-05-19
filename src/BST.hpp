@@ -12,13 +12,14 @@ namespace ft
 	template <typename Pair>
 	struct Node
 	{
+		bool tmp;
 		Pair value;
 		Node *left;
 		Node *right;
 		Node *parent;
 
-		Node() : value(NULL), left(NULL), right(NULL), parent(NULL){};
-		Node(const Pair &src) : value(src), left(NULL), right(NULL), parent(NULL){};
+		Node() : tmp(false), value(NULL), left(NULL), right(NULL), parent(NULL){};
+		Node(const Pair &src) : tmp(false), value(src), left(NULL), right(NULL), parent(NULL){};
 		Node(const Node &src) { *this = src; };
 		~Node(){};
 
@@ -30,6 +31,7 @@ namespace ft
 				this->left = rhs.left;
 				this->right = rhs.right;
 				this->parent = rhs.parent;
+				this->tmp = rhs.tmp;
 			}
 			return *this;
 		};
@@ -75,28 +77,30 @@ namespace ft
 		Tree_iterator &operator++()
 		{
 			node_pointer tmp = node;
+
 			if (node->right)
 			{
 				tmp = tmp->right;
 				while (tmp->left)
 					tmp = tmp->left;
 				this->node = tmp;
-
 				return *this;
 			}
 
 			node_pointer parent = tmp->parent;
 
-			if (parent && tmp == parent->right)
+			while (parent && tmp == parent->right)
+			{
 				tmp = parent;
-			parent = parent->parent;
+				parent = tmp->parent;
+			}
 			this->node = parent;
 			return *this;
 		};
 
 		Tree_iterator operator++(int)
 		{
-			node_pointer tmp(node);
+			Tree_iterator tmp(node);
 			operator++();
 			return tmp;
 		};
@@ -110,20 +114,24 @@ namespace ft
 				tmp = tmp->left;
 				while (tmp->right)
 					tmp = tmp->right;
-				return tmp;
+				this->node = tmp;
+				return *this;
 			}
 
 			node_pointer parent = tmp->parent;
 
-			if (parent && tmp == parent->left)
+			while (parent && tmp == parent->left)
+			{
 				tmp = parent;
-			parent = parent->parent;
-			return parent;
+				parent = tmp->parent;
+			}
+			this->node = parent;
+			return *this;
 		};
 
 		Tree_iterator operator--(int)
 		{
-			node_pointer tmp(node);
+			Tree_iterator tmp(node);
 			operator--();
 			return tmp;
 		};
@@ -144,7 +152,6 @@ namespace ft
 	public:
 		typedef Tp value_type;
 		typedef typename Tp::first_type key_type;
-		// typedef Compare key_compare;
 		typedef Allocator allocator_type;
 		typedef Node<Tp> node_type;
 		typedef Node<Tp> *node_pointer;
@@ -161,11 +168,12 @@ namespace ft
 		typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
 
 		typedef typename Allocator::template rebind<node_type>::other alloc_node;
+		typedef std::allocator_traits<alloc_node> node_traits;
 
 	private:
 		size_type _size;
 		alloc_node _alloc;
-		// key_compare cmp;
+		allocator_type _a;
 
 		node_pointer root;
 		node_pointer begin_node;
@@ -192,18 +200,49 @@ namespace ft
 			root->right = end_node;
 		}
 
-		tree(const tree &t) { return *this = t; };
+		tree(const tree &t)
+		{
+			_size = 0;
 
-		~tree() { delete_node(root); };
+			root = _alloc.allocate(1);
+			_alloc.construct(root, value_type());
+
+			begin_node = _alloc.allocate(1);
+			_alloc.construct(begin_node, value_type());
+
+			begin_node->parent = root;
+			root->left = begin_node;
+
+			end_node = _alloc.allocate(1);
+			_alloc.construct(end_node, value_type());
+
+			end_node->parent = root;
+			root->right = end_node;
+
+			*this = t;
+		};
+
+		~tree()
+		{
+			if (_size != 0)
+				delete_node(root);
+			_alloc.destroy(root);
+			_alloc.deallocate(root, 1);
+			_alloc.destroy(begin_node);
+			_alloc.deallocate(begin_node, 1);
+			_alloc.destroy(end_node);
+			_alloc.deallocate(end_node, 1);
+		};
 
 		tree &operator=(const tree &t)
 		{
 			if (this != &t)
 			{
-				this->_size = t._size;
+				if (_size != 0)
+					clear();
 				this->_alloc = t._alloc;
-				// this->cmp = t.cmp;
-				insert(t.begin(), t.end());
+				insert_unique(t.begin(), t.end());
+				this->_size = t._size;
 			}
 
 			return *this;
@@ -228,17 +267,38 @@ namespace ft
 
 		size_type size() const { return _size; };
 
-		size_type max_size() const { return _alloc.max_size(); };
+		size_type max_size() const
+		{
+			return (std::min<size_type>(
+                node_traits::max_size(alloc_node()),
+                std::numeric_limits<difference_type>::max()));
+		};
 
 		node_pointer searchNode(const value_type &val)
 		{
 			node_pointer tmp = root;
 
-			while (tmp != end_node)
+			while (tmp != NULL && (tmp != end_node && tmp != begin_node))
 			{
 				if (tmp->value.first == val.first)
 					return tmp;
 				else if (val.first < tmp->value.first)
+					tmp = tmp->left;
+				else
+					tmp = tmp->right;
+			}
+			return (NULL);
+		}
+
+		node_pointer searchNode(const key_type &val)
+		{
+			node_pointer tmp = root;
+
+			while (tmp && (tmp != end_node && tmp != begin_node))
+			{
+				if (tmp->value.first == val)
+					return tmp;
+				else if (val < tmp->value.first)
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -257,12 +317,35 @@ namespace ft
 				par->right = child;
 		}
 
+		void change_root(node_pointer &newNode)
+		{
+			if (root->left != newNode)
+			{
+				newNode->left = root->left;
+				root->left->parent = newNode;
+			}
+			if (root->right != newNode)
+			{
+				newNode->right = root->right;
+				root->right->parent = newNode;
+			}
+
+			node_pointer tmp = root;
+			root = newNode;
+			
+			_alloc.destroy(tmp);
+			_alloc.deallocate(tmp, 1);			
+		}
+
 		pair<iterator, bool> insert_unique(const value_type &val)
 		{
 			if (!_size)
 			{
-				root->value = val;
+				node_pointer newNode = _alloc.allocate(1);;
+				_alloc.construct(newNode, val);
+				change_root(newNode);
 				_size++;
+
 				return ft::make_pair(iterator(root), true);
 			}
 
@@ -275,9 +358,12 @@ namespace ft
 
 			newNode = _alloc.allocate(1);
 			_alloc.construct(newNode, val);
-			
-			while (tmp != end_node)
+
+			node_pointer tp;
+
+			while (tmp && (tmp != end_node && tmp != begin_node))
 			{
+				tp = tmp;
 				if (newNode->value.first < tmp->value.first)
 				{
 					isleft = true;
@@ -286,8 +372,10 @@ namespace ft
 				else
 					tmp = tmp->right;
 			}
+			if (tmp == NULL)
+				tmp = tp;
 			reconnectNode(tmp->parent, newNode, isleft);
-			reconnectNode(newNode, tmp, false);
+			reconnectNode(newNode, tmp, isleft);
 			_size++;
 
 			return ft::make_pair(iterator(newNode), true);
@@ -299,15 +387,39 @@ namespace ft
 			return insert_unique(val).first;
 		};
 
+		template <class InputIterator>
+		void insert_unique(InputIterator first, InputIterator last)
+		{
+			for (; first != last; ++first)
+				insert_unique(*first);
+		};
+
+		iterator find(const key_type &k)
+		{
+			for (iterator i = begin(); i != end(); i++)
+				if (i->first == k)
+					return i;
+
+			return end();
+		};
+		const_iterator find(const key_type &k) const
+		{
+			for (const_iterator i = begin(); i != end(); i++)
+				if (i->first == k)
+					return i;
+
+			return end();
+		};
+
 		void erase(iterator position)
 		{
 			static_cast<void>(position);
-			erase(position.first);
+			erase(position->first);
 		};
 
-		node_pointer findMaxNode(node_pointer root)
+		node_pointer findMaxNode(node_pointer node)
 		{
-			node_pointer tmp = root;
+			node_pointer tmp = node;
 
 			if (!tmp)
 				return NULL;
@@ -317,6 +429,59 @@ namespace ft
 			return tmp;
 		}
 
+		node_pointer findMinNode(node_pointer node)
+		{
+			node_pointer tmp = node;
+
+			if (!tmp)
+				return NULL;
+
+			while (tmp->left)
+				tmp = tmp->left;
+			return tmp;
+		}
+
+		void erase_unique(node_pointer &parent, node_pointer child, bool isleft, node_pointer del)
+		{
+				reconnectNode(parent, child, isleft);
+				if (del != NULL)
+				{
+					_alloc.destroy(del);
+					_alloc.deallocate(del, 1);
+				}
+		}
+
+		void erase_root()
+		{
+			if (root->left != begin_node)
+			{
+
+				node_pointer max = findMaxNode(root->left);
+				if (max->parent != root)
+					max->parent->right = NULL;
+				max->parent = NULL;
+				change_root(max);
+			}
+			else if (root->right != end_node)
+			{
+				
+				node_pointer min = findMinNode(root->right);
+				if (min->parent != root)
+					min->parent->left = NULL;
+				min->parent = NULL;
+				change_root(min);
+			}
+			else
+			{
+				_size = 0;
+				_alloc.destroy(root);
+				root = _alloc.allocate(1);
+				_alloc.construct(root, value_type());
+				return ;
+			}
+			--_size;
+		}
+
 		size_type erase(const key_type &k)
 		{
 			bool isleft = false;
@@ -324,32 +489,30 @@ namespace ft
 			node_pointer tmp = NULL;
 			node_pointer tp = NULL;
 
-			if (!cur)
+			if (cur == NULL)
 				return 0;
+
+			if (cur == root)
+			{
+				erase_root();
+				return 1;
+			}
 
 			tmp = cur;
 			tp = cur->parent;
 			if (tp->left == cur)
 				isleft = true;
 			if (cur->left == NULL && cur->right == NULL)
-			{
-				reconnectNode(tp, NULL, isleft);
-				delete cur;
-				cur = NULL;
-			}
+				erase_unique(tp, NULL, isleft, cur);
 			else if (cur->left == NULL)
 			{
 				cur = cur->right;
-				reconnectNode(tp, cur, isleft);
-				delete tmp;
-				tmp = NULL;
+				erase_unique(tp, cur, isleft, tmp);
 			}
 			else if (cur->right == NULL)
 			{
 				cur = cur->left;
-				reconnectNode(tp, cur, isleft);
-				delete tmp;
-				tmp = NULL;
+				erase_unique(tp, cur, isleft, tmp);
 			}
 			else
 			{
@@ -357,10 +520,10 @@ namespace ft
 				max->parent->right = NULL;
 				max->left = cur->left;
 				max->right = cur->right;
-				reconnectNode(tp, max, isleft);
-				delete cur;
-				cur = NULL;
+				erase_unique(tp, max, isleft, cur);
 			}
+			--_size;
+
 			return 1;
 		};
 
@@ -370,7 +533,7 @@ namespace ft
 			{
 				iterator tmp(first);
 				first++;
-				erase(tmp.first);
+				erase(tmp->first);
 			}
 		};
 
@@ -397,110 +560,39 @@ namespace ft
 
 		void delete_node(node_pointer node)
 		{
+			if (node == NULL || node == begin_node || node == end_node)
+				return ;
 			if (node->left)
 				delete_node(node->left);
 			if (node->right)
 				delete_node(node->right);
 			_alloc.destroy(node);
-			_alloc.deallocate(node, 1);
+			if (node != root)
+				_alloc.deallocate(node, 1);
 		}
 
-		void clear() { delete_node(root); };
-
-		// key_compare key_comp() const
-		// {
-		// 	return cmp;
-		// };
-
-		iterator find(const key_type &k)
+		void clear()
 		{
-			for (iterator i = begin(); i != end(); i++)
-				if (i->first == k)
-					return i;
+			if (_size != 0)
+				delete_node(root);
 
-			return end();
-		};
-		const_iterator find(const key_type &k) const
-		{
-			for (const_iterator i = begin(); i != end(); i++)
-				if (i->first == k)
-					return i;
+			_size = 0;
+			root = _alloc.allocate(1);
+			_alloc.construct(root, value_type());
+			root->left = begin_node;
+			root->right = end_node;
 
-			return end();
+			begin_node->parent = root;
+			end_node->parent = root;
 		};
 
 		size_type count_unique(const key_type &k) const
 		{
-			if (find(k))
+			if (find(k) != end())
 				return 1;
 
 			return 0;
 		};
-
-		// iterator lower_bound(const key_type &k)
-		// {
-		// 	iterator b = begin();
-
-		// 	while (b != end())
-		// 	{
-		// 		if (!cmp(b->first, k))
-		// 			break;
-		// 		b++;
-		// 	}
-
-		// 	return b;
-		// };
-
-		// const_iterator lower_bound(const key_type &k) const
-		// {
-		// 	const_iterator b = begin();
-
-		// 	while (b != end())
-		// 	{
-		// 		if (!cmp(k, k))
-		// 			break;
-		// 		++b;
-		// 	}
-
-		// 	return b;
-		// };
-
-		// iterator upper_bound(const key_type &k)
-		// {
-		// 	iterator b = begin();
-
-		// 	while (b != end())
-		// 	{
-		// 		if (cmp(k, b->first))
-		// 			break;
-		// 		b++;
-		// 	}
-
-		// 	return b;
-		// };
-		// const_iterator upper_bound(const key_type &k) const
-		// {
-		// 	const_iterator b = begin();
-
-		// 	while (b != end())
-		// 	{
-		// 		if (cmp(k, b->first))
-		// 			break;
-		// 		b++;
-		// 	}
-
-		// 	return b;
-		// };
-
-		// pair<const_iterator, const_iterator> equal_range_unique(const key_type &k) const
-		// {
-		// 	return ft::make_pair(lower_bound(k), upper_bound(k));
-		// };
-
-		// pair<iterator, iterator> equal_range_unique(const key_type &k)
-		// {
-		// 	return ft::make_pair(lower_bound(k), upper_bound(k));
-		// };
 
 		allocator_type get_allocator() const { return _alloc; };
 	};

@@ -30,14 +30,15 @@ namespace ft
 		T2 second;
 
 		pair() : first(), second(){};
+		pair(const pair<T1, T2>& pr) : first(pr.first), second(pr.second){};
 		template <class U, class V>
-		pair(const pair<U, V> &pr) : first(pr.first), second(pr.second){};
-		pair(const first_type &a, const second_type &b) : first(a), second(b){};
+		pair(const pair<U, V>& pr) : first(pr.first), second(pr.second){};
+		pair(const first_type& a, const second_type& b) : first(a), second(b){};
 
-		pair &operator=(const pair &pr)
+		pair& operator=(const pair<T1, T2>& pr)
 		{
-			this->first = pr.first;
-			this->second = pr.second;
+			first = pr.first;
+			second = pr.second;
 			return *this;
 		};
 	};
@@ -63,7 +64,7 @@ namespace ft
 	template <class T1, class T2>
 	bool operator<(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs)
 	{
-		lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second);
+		return lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second);
 	};
 
 	template <class T1, class T2>
