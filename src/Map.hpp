@@ -96,24 +96,24 @@ namespace ft
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
-		explicit map(const allocator_type &alloc = allocator_type()) : _tree(alloc){};
+		explicit map(const allocator_type &alloc = allocator_type(), const key_compare &com = key_compare()) : _tree(alloc), comp(com) {};
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last,
-			const allocator_type &alloc = allocator_type(),
-			typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0) : _tree(alloc)
+			const allocator_type &alloc = allocator_type(), const key_compare &com = key_compare(),
+			typename ft::enable_if<!ft::is_integral<InputIterator>::value>::type * = 0) : _tree(alloc), comp(com)
 		{
 			insert(first, last);
 		};
 
-		map(const map &x) : _tree(x._tree){};
+		map(const map &x) : _tree(x._tree), comp(key_compare()) {};
 
 		~map(){};
 
 		map &operator=(const map &x)
 		{
-			_tree = x._tree;
 			comp = x.comp;
+			_tree = x._tree;
 			return *this;
 		};
 
@@ -254,14 +254,14 @@ namespace ft
 	bool operator==(
 			const map<Key, Tp, Compare, Allocator> &lhs, const map<Key, Tp, Compare, Allocator> &rhs)
 	{
-		return lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+		return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 	}
 
 	template <class Key, class Tp, class Compare, class Allocator>
 	bool operator!=(
 			const map<Key, Tp, Compare, Allocator> &lhs, const map<Key, Tp, Compare, Allocator> &rhs)
 	{
-		return lhs.size() != rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin());
+		return !(lhs == rhs);
 	}
 
 	template <class Key, class Tp, class Compare, class Allocator>

@@ -37,14 +37,14 @@ namespace ft
 		};
 	};
 
-	template <typename T, typename Node, typename Pointer, typename Refernce>
+	template <typename T, typename Node>
 	class Tree_iterator
 	{
 	public:
 		typedef T value_type;
 		typedef std::ptrdiff_t difference_type;
-		typedef Pointer pointer;
-		typedef Refernce reference;
+		typedef T* pointer;
+		typedef T& reference;
 		typedef bidirectional_iterator_tag iterator_category;
 
 		typedef Node node_type;
@@ -59,9 +59,9 @@ namespace ft
 		Tree_iterator(const Tree_iterator &src) { *this = src; };
 		~Tree_iterator(){};
 
-		operator Tree_iterator<const T, Node, Pointer, Refernce>() const
+		operator Tree_iterator<const T, Node>() const
 		{
-			return (Tree_iterator<const T, Node, Pointer, Refernce>(this->node));
+			return (Tree_iterator<const T, Node>(this->node));
 		};
 
 		Tree_iterator &operator=(const Tree_iterator &rhs)
@@ -144,7 +144,22 @@ namespace ft
 		{
 			return !(x.node == this->node);
 		};
+
+		template <typename T1, typename T2>
+		friend bool operator==(const Tree_iterator<T1, T2> &lhs, const Tree_iterator<T1, T2> &rhs);
 	};
+
+	template <typename T1, typename T2>
+	bool operator==(const Tree_iterator<T1, T2> &lhs, const Tree_iterator<T1, T2> &rhs)
+	{
+		return lhs.node == rhs.node;
+	}
+
+	template <typename T1, typename T2>
+	bool operator!=(const Tree_iterator<T1, T2> &lhs, const Tree_iterator<T1, T2> &rhs)
+	{
+		return !(lhs == rhs);
+	}
 
 	template <class Tp, class Allocator = std::allocator<Tp> >
 	class tree
@@ -163,8 +178,8 @@ namespace ft
 		typedef typename allocator_type::pointer pointer;
 		typedef typename allocator_type::const_pointer const_pointer;
 
-		typedef Tree_iterator<value_type, node_type, pointer, reference> iterator;
-		typedef Tree_iterator<const value_type, node_type, pointer, reference> const_iterator;
+		typedef Tree_iterator<value_type, node_type> iterator;
+		typedef Tree_iterator<const value_type, node_type> const_iterator;
 		typedef typename ft::iterator_traits<iterator>::difference_type difference_type;
 
 		typedef typename Allocator::template rebind<node_type>::other alloc_node;
@@ -181,6 +196,17 @@ namespace ft
 
 	public:
 		explicit tree(const allocator_type &alloc = allocator_type()) : _alloc(alloc)
+		{
+			init_tree();
+		}
+
+		tree(const tree &t)
+		{
+			init_tree();
+			*this = t;
+		};
+
+		void init_tree()
 		{
 			_size = 0;
 
@@ -200,32 +226,10 @@ namespace ft
 			root->right = end_node;
 		}
 
-		tree(const tree &t)
-		{
-			_size = 0;
-
-			root = _alloc.allocate(1);
-			_alloc.construct(root, value_type());
-
-			begin_node = _alloc.allocate(1);
-			_alloc.construct(begin_node, value_type());
-
-			begin_node->parent = root;
-			root->left = begin_node;
-
-			end_node = _alloc.allocate(1);
-			_alloc.construct(end_node, value_type());
-
-			end_node->parent = root;
-			root->right = end_node;
-
-			*this = t;
-		};
-
 		~tree()
 		{
 			if (_size != 0)
-				delete_node(root);
+				clear();
 			_alloc.destroy(root);
 			_alloc.deallocate(root, 1);
 			_alloc.destroy(begin_node);
@@ -239,7 +243,10 @@ namespace ft
 			if (this != &t)
 			{
 				if (_size != 0)
+				{
+					init_tree();
 					clear();
+				}
 				this->_alloc = t._alloc;
 				insert_unique(t.begin(), t.end());
 				this->_size = t._size;
@@ -370,11 +377,12 @@ namespace ft
 					tmp = tmp->left;
 				}
 				else
+				{
+					isleft = false;
 					tmp = tmp->right;
+				}
 			}
-			if (tmp == NULL)
-				tmp = tp;
-			reconnectNode(tmp->parent, newNode, isleft);
+			reconnectNode(tp, newNode, isleft);
 			reconnectNode(newNode, tmp, isleft);
 			_size++;
 

@@ -58,13 +58,13 @@ namespace ft
 	};
 
 	template <typename _Tp, typename _C1>
-	inline bool operator==(const stack<_Tp, _C1> &lhs, const stack<_Tp, _C1> &rhs)
+	bool operator==(const stack<_Tp, _C1> &lhs, const stack<_Tp, _C1> &rhs)
 	{
 		return lhs.c == rhs.c;
 	};
 
 	template <typename _Tp, typename _C1>
-	inline bool operator!=(const stack<_Tp, _C1> &lhs, const stack<_Tp, _C1> &rhs)
+	bool operator!=(const stack<_Tp, _C1> &lhs, const stack<_Tp, _C1> &rhs)
 	{
 		return !(lhs == rhs);
 	};
