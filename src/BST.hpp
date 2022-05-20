@@ -161,11 +161,12 @@ namespace ft
 		return !(lhs == rhs);
 	}
 
-	template <class Tp, class Allocator = std::allocator<Tp> >
+	template <class Tp, class Compare, class Allocator = std::allocator<Tp> >
 	class tree
 	{
 	public:
 		typedef Tp value_type;
+		typedef Compare key_compare;
 		typedef typename Tp::first_type key_type;
 		typedef Allocator allocator_type;
 		typedef Node<Tp> node_type;
@@ -188,14 +189,14 @@ namespace ft
 	private:
 		size_type _size;
 		alloc_node _alloc;
-		allocator_type _a;
+		key_compare _comp;
 
 		node_pointer root;
 		node_pointer begin_node;
 		node_pointer end_node;
 
 	public:
-		explicit tree(const allocator_type &alloc = allocator_type()) : _alloc(alloc)
+		explicit tree(const allocator_type &alloc = allocator_type(), const key_compare &com = key_compare()) : _alloc(alloc), _comp(com)
 		{
 			init_tree();
 		}
@@ -247,6 +248,7 @@ namespace ft
 					init_tree();
 					clear();
 				}
+				this->_comp = t._comp;
 				this->_alloc = t._alloc;
 				insert_unique(t.begin(), t.end());
 				this->_size = t._size;
@@ -327,15 +329,9 @@ namespace ft
 		void change_root(node_pointer &newNode)
 		{
 			if (root->left != newNode)
-			{
-				newNode->left = root->left;
-				root->left->parent = newNode;
-			}
+				reconnectNode(newNode, root->left, true);
 			if (root->right != newNode)
-			{
-				newNode->right = root->right;
-				root->right->parent = newNode;
-			}
+				reconnectNode(newNode, root->right, false);
 
 			node_pointer tmp = root;
 			root = newNode;
@@ -451,21 +447,22 @@ namespace ft
 
 		void erase_unique(node_pointer &parent, node_pointer child, bool isleft, node_pointer del)
 		{
-				reconnectNode(parent, child, isleft);
-				if (del != NULL)
-				{
-					_alloc.destroy(del);
-					_alloc.deallocate(del, 1);
-				}
+			reconnectNode(parent, child, isleft);
+			if (del != NULL)
+			{
+				_alloc.destroy(del);
+				_alloc.deallocate(del, 1);
+			}
 		}
 
 		void erase_root()
 		{
 			if (root->left != begin_node)
 			{
-
 				node_pointer max = findMaxNode(root->left);
-				if (max->parent != root)
+				if (max->left && max->parent != root)
+					reconnectNode(max->parent, max->left, false);
+				if (max->parent->right == max)
 					max->parent->right = NULL;
 				max->parent = NULL;
 				change_root(max);
@@ -474,7 +471,9 @@ namespace ft
 			{
 				
 				node_pointer min = findMinNode(root->right);
-				if (min->parent != root)
+				if (min->right && min->parent != root)
+					reconnectNode(min->parent, min->right, true);
+				if (min->parent->left == min)
 					min->parent->left = NULL;
 				min->parent = NULL;
 				change_root(min);
@@ -510,6 +509,7 @@ namespace ft
 			tp = cur->parent;
 			if (tp->left == cur)
 				isleft = true;
+
 			if (cur->left == NULL && cur->right == NULL)
 				erase_unique(tp, NULL, isleft, cur);
 			else if (cur->left == NULL)
@@ -525,9 +525,20 @@ namespace ft
 			else
 			{
 				node_pointer max = findMaxNode(cur->left);
-				max->parent->right = NULL;
-				max->left = cur->left;
-				max->right = cur->right;
+
+				if (max->parent->right == max)
+					max->parent->right = NULL;
+				if (max->left && max->parent != cur)
+					reconnectNode(max->parent, max->left, false);
+				
+				node_pointer left = cur->left;
+				node_pointer right = cur->right;
+
+				if (left == max)
+					left = max->left;
+				
+				reconnectNode(max, left, true);
+				reconnectNode(max, right, false);
 				erase_unique(tp, max, isleft, cur);
 			}
 			--_size;
@@ -552,18 +563,21 @@ namespace ft
 			node_pointer te = x.end_node;
 			size_type ts = x._size;
 			alloc_node ta = x._alloc;
+			key_compare tc = x._comp;
 
 			x.root = this->root;
 			x.begin_node = this->begin_node;
 			x.end_node = this->end_node;
 			x._size = this->_size;
 			x._alloc = this->_alloc;
+			x._comp = this->_comp;
 
 			this->root = tt;
 			this->begin_node = tb;
 			this->end_node = te;
 			this->_size = ts;
 			this->_alloc = ta;
+			this->_comp = tc;
 		}
 
 		void delete_node(node_pointer node)

@@ -85,7 +85,7 @@ namespace ft
 		};
 
 	private:
-		typedef ft::tree<value_type, allocator_type> _base;
+		typedef ft::tree<value_type, key_compare,  allocator_type> _base;
 
 		_base _tree;
 		key_compare comp;
