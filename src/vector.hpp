@@ -328,12 +328,11 @@ namespace ft
 			for (size_type i = 0; i < _size; i++)
 				_alloc.construct(tmp + i, *(_arr + i));
 
-				for (size_type i = 0; i < _size; i++)
-					_alloc.destroy(_arr + i);
-				_alloc.deallocate(_arr, _cap);
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(_arr + i);
+			_alloc.deallocate(_arr, _cap);
 
 			_cap = n;
-			_arr = _alloc.allocate(_cap);
 			_arr = tmp;
 		}
 
