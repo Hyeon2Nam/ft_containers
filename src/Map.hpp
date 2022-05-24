@@ -12,45 +12,6 @@
 
 namespace ft
 {
-	template <class _Key, class _CP, class _Compare>
-	class map_value_compare
-	{
-	private:
-		_Compare comp;
-
-	public:
-		map_value_compare() : comp(){};
-		map_value_compare(_Compare c) : comp(c){};
-		const _Compare &key_comp() const { return comp; };
-
-		bool operator()(const _CP &x, const _CP &y) const
-		{
-			return comp(x.first, y.first);
-		}
-
-		bool operator()(const _CP &x, const _Key &y) const
-		{
-			return comp(x.first, y);
-		}
-
-		bool operator()(const _Key &x, const _CP &y) const
-		{
-			return comp(x, y.first);
-		}
-
-		void swap(map_value_compare &y)
-		{
-			std::swap(comp, y.comp);
-		}
-	};
-
-	template <class _Key, class _CP, class _Compare>
-	void swap(map_value_compare<_Key, _CP, _Compare> &x,
-			  map_value_compare<_Key, _CP, _Compare> &y)
-	{
-		x.swap(y);
-	}
-
 	template <class Key,
 			  class T,
 			  class Compare = ft::less<Key>,
@@ -85,7 +46,7 @@ namespace ft
 		};
 
 	private:
-		typedef ft::tree<value_type, key_compare,  allocator_type> _base;
+		typedef ft::tree<value_type, key_compare, allocator_type> _base;
 
 		_base _tree;
 		key_compare comp;

@@ -7,129 +7,72 @@
 
 #  define TESTED_NAMESPACE ft
 
-
-
-# include <iostream>
-# include <string>
-
-// --- Class foo
-template <typename T>
-class foo {
-	public:
-		typedef T	value_type;
-
-		foo(void) : value(), _verbose(false) { };
-		foo(value_type src, const bool verbose = false) : value(src), _verbose(verbose) { };
-		foo(foo const &src, const bool verbose = false) : value(src.value), _verbose(verbose) { };
-		~foo(void) { if (this->_verbose) std::cout << "~foo::foo()" << std::endl; };
-		void m(void) { std::cout << "foo::m called [" << this->value << "]" << std::endl; };
-		void m(void) const { std::cout << "foo::m const called [" << this->value << "]" << std::endl; };
-		foo &operator=(value_type src) { this->value = src; return *this; };
-		foo &operator=(foo const &src) {
-			if (this->_verbose || src._verbose)
-				std::cout << "foo::operator=(foo) CALLED" << std::endl;
-			this->value = src.value;
-			return *this;
-		};
-		value_type	getValue(void) const { return this->value; };
-		void		switchVerbose(void) { this->_verbose = !(this->_verbose); };
-
-		operator value_type(void) const {
-			return value_type(this->value);
-		}
-	private:
-		value_type	value;
-		bool		_verbose;
-};
+#define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
 
 template <typename T>
-std::ostream	&operator<<(std::ostream &o, foo<T> const &bar) {
-	o << bar.getValue();
-	return o;
-}
-// --- End of class foo
-
-template <typename T>
-T	inc(T it, int n)
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
 {
-	while (n-- > 0)
-		++it;
-	return (it);
-}
+	const T_SIZE_TYPE size = vct.size();
+	const T_SIZE_TYPE capacity = vct.capacity();
+	const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
+	// Cannot limit capacity's max value because it's implementation dependent
 
-template <typename T>
-T	dec(T it, int n)
-{
-	while (n-- > 0)
-		--it;
-	return (it);
-}
-
-
-
-
-#define _pair TESTED_NAMESPACE::pair
-
-template <typename T>
-std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
-{
-	o << "key: " << iterator->first << " | value: " << iterator->second;
-	if (nl)
-		o << std::endl;
-	return ("");
-}
-
-template <typename T_MAP>
-void	printSize(T_MAP const &mp, bool print_content = 1)
-{
-	std::cout << "size: " << mp.size() << std::endl;
-	std::cout << "max_size: " << mp.max_size() << std::endl;
+	std::cout << "size: " << size << std::endl;
+	std::cout << "capacity: " << isCapacityOk << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
 	if (print_content)
 	{
-		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
 		std::cout << std::endl << "Content is:" << std::endl;
 		for (; it != ite; ++it)
-			std::cout << "- " << printPair(it, false) << std::endl;
+			std::cout << "- " << *it << std::endl;
 	}
 	std::cout << "###############################################" << std::endl;
 }
 
-template <typename T1, typename T2>
-void	printReverse(TESTED_NAMESPACE::map<T1, T2> &mp)
-{
-	typename TESTED_NAMESPACE::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
-
-	std::cout <<  "printReverse:" << std::endl;
-	while (it != ite) {
-		it--;
-		std::cout << "-> " << printPair(it, false) << std::endl;
-	}
-	std::cout << "_______________________________________________" << std::endl;
-}
-
-#define T1 int
-#define T2 std::string
-
-struct ft_more {
-	bool	operator()(const T1 &first, const T1 &second) const {
-		return (first > second);
-	}
-};
-
-typedef TESTED_NAMESPACE::map<T1, T2, ft_more> ft_mp;
-typedef TESTED_NAMESPACE::map<T1, T2, ft_more>::iterator ft_mp_it;
+#define TESTED_TYPE int
 
 int		main(void)
 {
-	ft_mp mp;
+	{
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(5);
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin(), ite = vct.end();
 
-	mp[42] = "fgzgxfn";
-	mp[25] = "funny";
-	mp[80] = "hey";
-	mp[12] = "no";
-	mp[27] = "bee";
-	mp[90] = "8";
-	printSize(mp);
+	std::cout << "len: " << (ite - it) << std::endl;
+	for (; it != ite; ++it)
+		*it = (ite - it);
+
+	it = vct.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_range(it, --(--ite));
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 5;
+
+	it = vct.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_copy(vct);
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 7;
+	std::cout << vct_copy.capacity() << "\n";
+	vct_copy.push_back(42);
+	// vct_copy.push_back(21);
+
+	std::cout << "\t-- PART ONE --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
+
+	vct = vct_copy;
+	vct_copy = vct_range;
+	vct_range.clear();
+
+	std::cout << "\t-- PART TWO --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
+	};
+
+	while(1)
+		;
 
 	return (0);
 }

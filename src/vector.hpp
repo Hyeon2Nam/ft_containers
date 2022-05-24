@@ -324,16 +324,13 @@ namespace ft
 			if (n <= _cap)
 				return;
 
-			pointer tmp = _alloc.allocate(_cap);
+			pointer tmp = _alloc.allocate(n);
 			for (size_type i = 0; i < _size; i++)
 				_alloc.construct(tmp + i, *(_arr + i));
 
-			if (_size != 0)
-			{
 				for (size_type i = 0; i < _size; i++)
 					_alloc.destroy(_arr + i);
 				_alloc.deallocate(_arr, _cap);
-			}
 
 			_cap = n;
 			_arr = _alloc.allocate(_cap);
@@ -379,6 +376,7 @@ namespace ft
 
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_arr + i);
+			_alloc.deallocate(_arr, _cap);
 
 			_size = ft::diff(first, last);
 			_cap = _size;

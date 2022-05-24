@@ -291,7 +291,7 @@ namespace ft
 			{
 				if (tmp->value.first == val.first)
 					return tmp;
-				else if (val.first < tmp->value.first)
+				else if (_comp(val.first, tmp->value.first))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -307,7 +307,7 @@ namespace ft
 			{
 				if (tmp->value.first == val)
 					return tmp;
-				else if (val < tmp->value.first)
+				else if (_comp(val, tmp->value.first))
 					tmp = tmp->left;
 				else
 					tmp = tmp->right;
@@ -367,7 +367,7 @@ namespace ft
 			while (tmp && (tmp != end_node && tmp != begin_node))
 			{
 				tp = tmp;
-				if (newNode->value.first < tmp->value.first)
+				if (_comp(newNode->value.first, tmp->value.first))
 				{
 					isleft = true;
 					tmp = tmp->left;
