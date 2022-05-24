@@ -1,59 +1,78 @@
-#include "vector.hpp"
 #include "stack.hpp"
-#include <stack>
-#include <vector>
+#include "map.hpp"
 #include <algorithm>
 #include <list>
+#include <map>
+#include "vector.hpp"
 
 #  define TESTED_NAMESPACE ft
 
-#define TESTED_TYPE int
-#define t_stack_ TESTED_NAMESPACE::stack<TESTED_TYPE>
-typedef t_stack_::container_type container_type;
+#define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
 
-template <class T_STACK>
-void	cmp(const T_STACK &lhs, const T_STACK &rhs)
+template <typename T>
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = true)
 {
-	static int i = 0;
+	const T_SIZE_TYPE size = vct.size();
+	const T_SIZE_TYPE capacity = vct.capacity();
+	const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
+	// Cannot limit capacity's max value because it's implementation dependent
 
-	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
-	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
-	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
-	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
+	std::cout << "size: " << size << std::endl;
+	std::cout << "capacity: " << isCapacityOk << std::endl;
+	std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
 }
+
+#define TESTED_TYPE int
 
 int		main(void)
 {
-	container_type	ctnr;
+	{
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(5);
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin(), ite = vct.end();
 
-	ctnr.push_back(21);
-	ctnr.push_back(42);
-	ctnr.push_back(1337);
-	ctnr.push_back(19);
-	ctnr.push_back(0);
-	ctnr.push_back(183792);
+	std::cout << "len: " << (ite - it) << std::endl;
+	for (; it != ite; ++it)
+		*it = (ite - it);
 
-	t_stack_	stck(ctnr);
-	t_stack_	stck2(ctnr);
+	it = vct.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_range(it, --(--ite));
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 5;
 
-	cmp(stck, stck);  // 0
-	cmp(stck, stck2); // 1
+	it = vct.begin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct_copy(vct);
+	for (int i = 0; it != ite; ++it)
+		*it = ++i * 7;
+	std::cout << vct_copy.capacity() << "\n";
+	vct_copy.push_back(42);
+	// vct_copy.push_back(21);
 
-	stck2.push(60);
-	stck2.push(61);
-	stck2.push(62);
+	std::cout << "\t-- PART ONE --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
 
-	cmp(stck, stck2); // 2
-	cmp(stck2, stck); // 3
+	vct = vct_copy;
+	vct_copy = vct_range;
+	vct_range.clear();
 
-	stck.push(42);
+	std::cout << "\t-- PART TWO --" << std::endl;
+	printSize(vct);
+	printSize(vct_range);
+	printSize(vct_copy);
+	};
 
-	cmp(stck, stck2); // 4
-	cmp(stck2, stck); // 5
+	while(1)
+		;
 
-	stck.push(100);
-
-	cmp(stck, stck2); // 6
-	cmp(stck2, stck); // 7
 	return (0);
 }
