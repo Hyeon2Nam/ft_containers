@@ -112,8 +112,7 @@ namespace ft
 		template <class InputIterator>
 		void insert(InputIterator first, InputIterator last)
 		{
-			for (; first != last; ++first)
-				_tree.insert_unique(*first);
+			_tree.insert_unique(first, last);
 		};
 
 		void erase(iterator position) { _tree.erase(position); };

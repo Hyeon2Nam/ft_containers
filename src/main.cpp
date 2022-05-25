@@ -66,75 +66,59 @@ T	dec(T it, int n)
 }
 
 
-template <typename T_STACK>
-void	printSize(T_STACK &stck, bool print_content = 1)
+#define _pair TESTED_NAMESPACE::pair
+
+template <typename T>
+std::string	printPair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
 {
-	std::cout << "size: " << stck.size() << std::endl;
+	o << "key: " << iterator->first << " | value: " << iterator->second;
+	if (nl)
+		o << std::endl;
+	return ("");
+}
+
+template <typename T_MAP>
+void	printSize(T_MAP const &mp, bool print_content = 1)
+{
+	std::cout << "size: " << mp.size() << std::endl;
+	std::cout << "max_size: " << mp.max_size() << std::endl;
 	if (print_content)
 	{
-		std::cout << std::endl << "Content was:" << std::endl;
-		while (stck.size() != 0) {
-			std::cout << "- " << stck.top() << std::endl;
-			stck.pop();
-		}
+		typename T_MAP::const_iterator it = mp.begin(), ite = mp.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << printPair(it, false) << std::endl;
 	}
 	std::cout << "###############################################" << std::endl;
+}
+
+template <typename T1, typename T2>
+void	printReverse(TESTED_NAMESPACE::map<T1, T2> &mp)
+{
+	typename TESTED_NAMESPACE::map<T1, T2>::iterator it = mp.end(), ite = mp.begin();
+
+	std::cout << "printReverse:" << std::endl;
+	while (it != ite) {
+		it--;
+		std::cout << "-> " << printPair(it, false) << std::endl;
+	}
+	std::cout << "_______________________________________________" << std::endl;
 }
 
 
 
 // ===================
 
-
-#define TESTED_TYPE int
-#define t_stack_ TESTED_NAMESPACE::stack<TESTED_TYPE>
-typedef t_stack_::container_type container_type;
-
-template <class T_STACK>
-void	cmp(const T_STACK &lhs, const T_STACK &rhs)
-{
-	static int i = 0;
-
-	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
-	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
-	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
-	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
-}
+#define T1 int
+#define T2 int
 
 int		main(void)
 {
 	{
-	container_type	ctnr;
+	TESTED_NAMESPACE::map<char, int>::iterator it;
+	TESTED_NAMESPACE::map<char, float>::const_iterator ite;
 
-	ctnr.push_back(21);
-	ctnr.push_back(42);
-	ctnr.push_back(1337);
-	ctnr.push_back(19);
-	ctnr.push_back(0);
-	ctnr.push_back(183792);
-
-	t_stack_	stck(ctnr);
-	t_stack_	stck2(ctnr);
-
-	cmp(stck, stck);  // 0
-	cmp(stck, stck2); // 1
-
-	stck2.push(60);
-	stck2.push(61);
-	stck2.push(62);
-
-	cmp(stck, stck2); // 2
-	cmp(stck2, stck); // 3
-
-	stck.push(42);
-
-	cmp(stck, stck2); // 4
-	cmp(stck2, stck); // 5
-
-	stck.push(100);
-
-	cmp(stck, stck2); // 6
-	cmp(stck2, stck); // 7
+	std::cout << (it != ite) << std::endl;
 	}
 	while (1)
 		;
