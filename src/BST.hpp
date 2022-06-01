@@ -7,6 +7,9 @@
 #include "Iterator.hpp"
 #include "Utils.hpp"
 
+#include <__tree>
+#include <map>
+
 namespace ft
 {
 	template <typename Pair>
@@ -35,22 +38,7 @@ namespace ft
 			}
 			return *this;
 		};
-
-		template <typename A, typename B>
-		friend operator==(const Node<A> &lhs, const Node<B> &rhs);
 	};
-
-	template <typename A, typename B>
-	operator==(const Node<A> &lhs, const Node<B> &rhs)
-	{
-		return lhs.value == rhs.value && lhs.left == rhs.left && lhs.right == rhs.right && lhs.parent == rhs.parent && lhs.tmp == rhs.tmp;
-	}
-
-	template <typename A, typename B>
-	operator!=(const Node<A> &lhs, const Node<B> &rhs)
-	{
-		return !(lhs == rhs);
-	}
 
 	template <typename T, typename Node>
 	class Tree_iterator
@@ -153,28 +141,13 @@ namespace ft
 
 		bool operator==(const Tree_iterator &x)
 		{
-			return x.node == this->node;
+			return this->node == x.node;
 		};
 		bool operator!=(const Tree_iterator &x)
 		{
 			return !(x.node == this->node);
 		};
-
-		template <typename A, typename B>
-		friend bool operator==(const A &lhs, const B &rhs);
 	};
-
-	template <typename A, typename B>
-	bool operator==(const A &lhs, const B &rhs)
-	{
-		return lhs.node == rhs.node;
-	}
-
-	template <typename A, typename B>
-	bool operator!=(const A &lhs, const B &rhs)
-	{
-		return !(lhs == rhs);
-	}
 
 	template <class Tp, class Compare, class Allocator = std::allocator<Tp> >
 	class tree
