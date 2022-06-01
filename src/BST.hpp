@@ -7,6 +7,9 @@
 #include "Iterator.hpp"
 #include "Utils.hpp"
 
+#include <__tree>
+#include <map>
+
 namespace ft
 {
 	template <typename Pair>
@@ -138,28 +141,13 @@ namespace ft
 
 		bool operator==(const Tree_iterator &x)
 		{
-			return x.node == this->node;
+			return this->node == x.node;
 		};
 		bool operator!=(const Tree_iterator &x)
 		{
 			return !(x.node == this->node);
 		};
-
-		template <typename T1, typename T2>
-		friend bool operator==(const Tree_iterator<T1, T2> &lhs, const Tree_iterator<T1, T2> &rhs);
 	};
-
-	template <typename T1, typename T2>
-	bool operator==(const Tree_iterator<T1, T2> &lhs, const Tree_iterator<T1, T2> &rhs)
-	{
-		return lhs.node == rhs.node;
-	}
-
-	template <typename T1, typename T2>
-	bool operator!=(const Tree_iterator<T1, T2> &lhs, const Tree_iterator<T1, T2> &rhs)
-	{
-		return !(lhs == rhs);
-	}
 
 	template <class Tp, class Compare, class Allocator = std::allocator<Tp> >
 	class tree
@@ -229,14 +217,7 @@ namespace ft
 
 		~tree()
 		{
-			if (_size != 0)
-				clear();
-			_alloc.destroy(root);
-			_alloc.deallocate(root, 1);
-			_alloc.destroy(begin_node);
-			_alloc.deallocate(begin_node, 1);
-			_alloc.destroy(end_node);
-			_alloc.deallocate(end_node, 1);
+			clear();
 		};
 
 		tree &operator=(const tree &t)
@@ -245,8 +226,8 @@ namespace ft
 			{
 				if (_size != 0)
 				{
-					init_tree();
 					clear();
+					init_tree();
 				}
 				this->_comp = t._comp;
 				this->_alloc = t._alloc;
@@ -337,17 +318,18 @@ namespace ft
 			root = newNode;
 			
 			_alloc.destroy(tmp);
-			_alloc.deallocate(tmp, 1);			
+			_alloc.deallocate(tmp, 1);
 		}
 
 		pair<iterator, bool> insert_unique(const value_type &val)
 		{
+			(void)val;
 			if (!_size)
 			{
 				node_pointer newNode = _alloc.allocate(1);;
 				_alloc.construct(newNode, val);
 				change_root(newNode);
-				_size++;
+				++_size;
 
 				return ft::make_pair(iterator(root), true);
 			}
@@ -380,9 +362,11 @@ namespace ft
 			}
 			reconnectNode(tp, newNode, isleft);
 			reconnectNode(newNode, tmp, isleft);
-			_size++;
+			++_size;
 
 			return ft::make_pair(iterator(newNode), true);
+			return ft::make_pair(iterator(NULL), true);
+
 		};
 
 		iterator insert_unique(iterator position, const value_type &val)
@@ -582,30 +566,21 @@ namespace ft
 
 		void delete_node(node_pointer node)
 		{
-			if (node == NULL || node == begin_node || node == end_node)
+			if (!node)
 				return ;
-			if (node->left)
-				delete_node(node->left);
-			if (node->right)
-				delete_node(node->right);
+			delete_node(node->left);
+			delete_node(node->right);
 			_alloc.destroy(node);
-			if (node != root)
-				_alloc.deallocate(node, 1);
+			_alloc.deallocate(node, 1);
 		}
 
 		void clear()
 		{
-			if (_size != 0)
-				delete_node(root);
-
+			delete_node(root);
+			begin_node = NULL;
+			end_node = NULL;
+			root = NULL;
 			_size = 0;
-			root = _alloc.allocate(1);
-			_alloc.construct(root, value_type());
-			root->left = begin_node;
-			root->right = end_node;
-
-			begin_node->parent = root;
-			end_node->parent = root;
 		};
 
 		size_type count_unique(const key_type &k) const
