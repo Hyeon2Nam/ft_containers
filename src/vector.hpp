@@ -369,11 +369,14 @@ namespace ft
 
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_arr + i);
-			_alloc.deallocate(_arr, _cap);
-
 			_size = ft::diff(first, last);
-			_cap = _size;
-			_arr = _alloc.allocate(_cap);
+			if (_size > _cap)
+			{
+				_alloc.deallocate(_arr, _cap);
+				_cap = _size;
+				_arr = _alloc.allocate(_cap);
+			}
+
 			for (size_type i = 0; i < _size; i++)
 				_alloc.construct(_arr + i, *first++);
 		};
