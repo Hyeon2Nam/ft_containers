@@ -246,12 +246,9 @@ namespace ft
 		{
 			if (this != &x)
 			{
-				if (this->_size != 0)
-				{
-					for (size_type i = 0; i < _size; i++)
-						_alloc.destroy(_arr + i);
-					_alloc.deallocate(_arr, _cap);
-				}
+				for (size_type i = 0; i < _size; i++)
+					_alloc.destroy(_arr + i);
+				_alloc.deallocate(_arr, _cap);
 				this->_alloc = x.get_allocator();
 				this->_size = x.size();
 				this->_cap = x.capacity();
