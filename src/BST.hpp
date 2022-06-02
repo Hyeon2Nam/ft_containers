@@ -7,9 +7,6 @@
 #include "Iterator.hpp"
 #include "Utils.hpp"
 
-#include <__tree>
-#include <map>
-
 namespace ft
 {
 	template <typename Pair>
@@ -365,8 +362,6 @@ namespace ft
 			++_size;
 
 			return ft::make_pair(iterator(newNode), true);
-			return ft::make_pair(iterator(NULL), true);
-
 		};
 
 		iterator insert_unique(iterator position, const value_type &val)
@@ -453,7 +448,6 @@ namespace ft
 			}
 			else if (root->right != end_node)
 			{
-				
 				node_pointer min = findMinNode(root->right);
 				if (min->right && min->parent != root)
 					reconnectNode(min->parent, min->right, true);
@@ -466,7 +460,6 @@ namespace ft
 			{
 				_size = 0;
 				_alloc.destroy(root);
-				root = _alloc.allocate(1);
 				_alloc.construct(root, value_type());
 				return ;
 			}
