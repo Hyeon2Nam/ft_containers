@@ -1,14 +1,14 @@
 #include "common.hpp"
 
-#define int int
-#define int int
+#define T1 int
+#define T2 int
 
 int		main(void)
 {
-	ft::map<int, int> mp;
+	TESTED_NAMESPACE::map<T1, T2> mp;
 	mp[1] = 2;
 
-	ft::map<int, int>::const_iterator ite = mp.begin();
-	std::cout << ite->first << " " << ite->second;
+	TESTED_NAMESPACE::map<T1, T2>::const_iterator ite = mp.begin();
+	*ite = 42; // < -- error
 	return (0);
 }
