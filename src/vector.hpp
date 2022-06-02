@@ -233,12 +233,9 @@ namespace ft
 
 		~vector()
 		{
-			if (_size != 0)
-			{
-				for (size_type i = 0; i < _size; i++)
-					_alloc.destroy(_arr + i);
-				_alloc.deallocate(_arr, _cap);
-			}
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(_arr + i);
+			_alloc.deallocate(_arr, _cap);
 		};
 
 		/*
@@ -388,11 +385,13 @@ namespace ft
 			for (size_type i = 0; i < _size; i++)
 				_alloc.destroy(_arr + i);
 			if (n > _cap)
+			{
 				_alloc.deallocate(_arr, _cap);
+				_arr = _alloc.allocate(n);
+				_cap = n;
+			}
 
 			_size = n;
-			_cap = n;
-			_arr = _alloc.allocate(n);
 			for (size_type i = 0; i < _size; i++)
 				_alloc.construct(_arr + i, val);
 		};

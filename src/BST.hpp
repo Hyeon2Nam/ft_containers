@@ -532,6 +532,8 @@ namespace ft
 
 		void erase(iterator first, iterator last)
 		{
+			if (first == begin() && last == end())
+				clear();
 			while (first != last)
 			{
 				iterator tmp(first);
